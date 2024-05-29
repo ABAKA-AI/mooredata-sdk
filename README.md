@@ -98,7 +98,7 @@ are ahead of other python third-party point cloud libraries in terms of efficien
 ## Installation
 
 ### Install with PyPi (pip)
-
+Please note that abava-sdk is deprecated and no longer updated, please install our sdk with the following command
 ```sh
 pip install moore-sdk
 ```
