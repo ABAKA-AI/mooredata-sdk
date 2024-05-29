@@ -66,7 +66,7 @@ are ahead of other python third-party point cloud libraries in terms of efficien
 
 [2023-10-12] feat:
 
-- Support for interconversion of Euler angles, quaternions and rotation matrices
+- Support for interconversion of Euler angles, quaternions and rotation matrices 
 
 [2023-08-31] feat:
 
