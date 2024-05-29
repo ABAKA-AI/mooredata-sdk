@@ -1,0 +1,11 @@
+lxml
+numpy
+opencv_python
+Requests
+tqdm
+dynaconf
+scipy
+dask
+dask-expr
+python-lzf
+Pillow
