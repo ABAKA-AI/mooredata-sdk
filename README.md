@@ -62,7 +62,7 @@ are ahead of other python third-party point cloud libraries in terms of efficien
 
 [2023-11-29] perf
 
-- Optimize mask export
+- Optimize mask export 
 
 [2023-10-12] feat:
 
