@@ -2,7 +2,6 @@
 import math
 import re
 import struct
-import time
 
 import cv2
 import lzf
@@ -359,23 +358,27 @@ def pnp_compute_Rt(obj_points, img_points, intrinsic, distortion):
     return rvec, tvec
 
 
-def compute_points_in_box(bin_path, fields_len, box):
+def box_points_num(point_cloud, box):
     """
     Calculate the number of points in the 3D box
-    :param fields_len:
-    :param bin_path:
-    :param box: [x, y, z, l, w, h, r, p, y]
+    :param point_cloud: []
     :return: int
     """
-    point_cloud = np.fromfile(bin_path, dtype=np.float32)
-    point_cloud = point_cloud.reshape(-1, fields_len)
-
     px, py, pz = point_cloud[:, 0], point_cloud[:, 1], point_cloud[:, 2]
-    cx, cy, cz, l, w, h, r, p, y = box
+    cx, cy, cz, r, p, y, l, w, h = box
 
-    inv_rotation = euler_to_rotation_matrix([float(r), float(p), float(y)]).T
-    points_centered = np.array([px - cx, py - cy, pz - cz]).T
-    points_rotated = np.dot(points_centered, inv_rotation)
+    inv_rotation = euler_to_rotation_matrix([float(r), float(p), float(y)])
+    t = [cx,cy,cz]
+    # points_centered = np.array([px - cx, py - cy, pz - cz])
+    # points_rotated = np.dot(points_centered.T, inv_rotation)
+    points_rotated = (np.dot(np.linalg.inv(inv_rotation), point_cloud[:, :3].T - np.reshape(t, (3, 1)))).T
+    head = {
+        "FIELDS": ["x", "y", "z"],
+        "SIZE": ["4", "4", "4"],
+        "TYPE": ["F", "F", "F"],
+        "COUNT": ["1", "1", "1"]}
+
+    write_pcd(points_rotated, r"D:/test/01_test3.pcd", head, data_mode='binary')
 
     xmin, ymin, zmin = -l / 2, -w / 2, -h / 2
     xmax, ymax, zmax = l / 2, w / 2, h / 2
@@ -386,6 +389,33 @@ def compute_points_in_box(bin_path, fields_len, box):
     num_points = np.count_nonzero(inside_box)
 
     return num_points
+
+
+def box_points(point_cloud, box):
+    """
+    Calculate the number of points in the 3D box
+    :param point_cloud: []
+    :param box: [x, y, z, l, w, h, r, p, y]
+    :return: int
+    """
+    px, py, pz = point_cloud[:, 0], point_cloud[:, 1], point_cloud[:, 2]
+    cx, cy, cz, r, p, y, l, w, h = box
+
+    inv_rotation = euler_to_rotation_matrix([float(r), float(p), float(y)])
+    t = [cx, cy, cz]
+    # points_centered = np.array([px - cx, py - cy, pz - cz])
+    # points_rotated = np.dot(points_centered.T, inv_rotation)
+    points_rotated = (np.dot(np.linalg.inv(inv_rotation), point_cloud[:, :3].T - np.reshape(t, (3, 1)))).T
+
+    xmin, ymin, zmin = -l / 2, -w / 2, -h / 2
+    xmax, ymax, zmax = l / 2, w / 2, h / 2
+    inside_x = (points_rotated[:, 0] > xmin) & (points_rotated[:, 0] < xmax)
+    inside_y = (points_rotated[:, 1] > ymin) & (points_rotated[:, 1] < ymax)
+    inside_z = (points_rotated[:, 2] > zmin) & (points_rotated[:, 2] < zmax)
+    inside_box = inside_x & inside_y & inside_z
+    box_point = point_cloud[inside_box]
+
+    return box_point
 
 
 def rotation_matrix_to_quaternion(R):
