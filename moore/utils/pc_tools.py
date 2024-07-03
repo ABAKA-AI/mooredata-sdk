@@ -58,6 +58,8 @@ def read_pcd(pcd_path):
             for _ in range(headers['data_start']):
                 _ = f.readline()
             data = np.fromfile(f, dtype=dt)
+        # 去除每列都是0的点
+        data = np.array([point for point in data if not all(value == 0 for value in point)])
 
         names = headers["FIELDS"]
         counter_dict = {}
