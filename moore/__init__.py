@@ -1,4 +1,5 @@
 # -*-coding:utf-8 -*-
+import time
 import requests
 
 from .moore_data import *
@@ -38,7 +39,7 @@ class Client:
         }
         response = requests.request("POST", url, headers=headers, data=json.dumps(payload))
 
-        json_data = str2dict(response.text)
+        json_data = json.loads(response.text)
         if 'code' in json_data and json_data['code'] == 200:
             return json_data['data']
         else:
