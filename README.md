@@ -24,7 +24,7 @@
 
 </div>
 
-# MOORE Data SDK | For Python
+# MOOREData SDK | For Python
 
 Welcome to `MOORE SDK`, an open-source Software Development Kit that forms the backbone of the MOORE platform. Designed
 to convert data between MOORE’s native format and widely-used, universal data structures such as COCO, YOLO, LABELME,

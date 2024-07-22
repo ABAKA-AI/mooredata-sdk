@@ -10,7 +10,7 @@ requirements = [r.strip() for r in requirements]
 
 setuptools.setup(
     name='Moore_SDK',
-    version='1.0.16',
+    version='1.0.17',
     description='mooreSDK',
     install_requires=requirements,
     long_description=open(

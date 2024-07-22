@@ -43,8 +43,13 @@ def read_pcd(pcd_path):
                      ('F', '4'): np.float32, ('F', '8'): np.float64,
                      ('I', '1'): np.int8, ('I', '2'): np.int16, ('I', '4'): np.int32}
 
-    dtype_list = [(name, type_size_map[(field_type, size)]) for name, field_type, size in
-                  zip(headers["FIELDS"], headers['TYPE'], headers["SIZE"])]
+    dtype_list = []
+    for name, field_type, size, count in zip(headers["FIELDS"], headers["TYPE"], headers["SIZE"], headers["COUNT"]):
+        if int(count) > 1:
+            dtype_list.extend([(name + '_' + str(idx), type_size_map[(field_type, size)]) for idx, _ in enumerate(range(int(count)))])
+        else:
+            dtype_list.append((name, type_size_map[(field_type, size)]))
+
     dt = np.dtype(dtype_list)
 
     num_fields = len(headers['FIELDS'])
@@ -59,9 +64,9 @@ def read_pcd(pcd_path):
                 _ = f.readline()
             data = np.fromfile(f, dtype=dt)
         # 去除每列都是0的点
-        data = np.array([point for point in data if not all(value == 0 for value in point)])
+        # data = np.array([point for point in data if not all(value == 0 for value in point)])
 
-        names = headers["FIELDS"]
+        names = dt.names
         counter_dict = {}
         new_names = []
         for i, el in enumerate(names):
@@ -166,9 +171,15 @@ def write_pcd(points, out_path, head=None, data_mode='ascii'):
             points_string = []
 
             for point in points:
+                # binary_data = [
+                #     struct.pack(pack, float(point[idx])) if pack in ('f', 'd') else struct.pack(pack, int(point[idx])) for
+                #     idx, pack in enumerate(pack_string)]
                 binary_data = [
-                    struct.pack(pack, float(point[idx])) if pack == 'f' else struct.pack(pack, int(point[idx])) for
-                    idx, pack in enumerate(pack_string)]
+                    struct.pack(pack, np.float32(point[idx])) if pack == 'f' else (
+                        struct.pack(pack, np.float64(point[idx])) if pack == 'd' else struct.pack(pack, int(point[idx]))
+                    )
+                    for idx, pack in enumerate(pack_string)
+                ]
                 points_string.append(b''.join(binary_data))
 
             handle.write(b''.join(points_string))
@@ -434,17 +445,55 @@ def rotation_matrix_to_quaternion(R):
     return [qx, qy, qz, qw]
 
 
-def rotation_matrix_to_euler(R):
+def rotation_matrix_to_euler(R, sequence='xyz'):
     """
-    Convert rotation matrix to euler angles
-    :param R: 3X3 rotation matrix
-    :return:
+    Convert a rotation matrix to Euler angles given a specified rotation sequence.
+
+    :param R: 3x3 rotation matrix
+    :param sequence: Rotation sequence as a string, e.g., 'xyz', 'zyx'
+    :return: A list of Euler angles [alpha, beta, gamma] in radians
     """
-    sy = math.sqrt(R[0, 0] * R[0, 0] + R[1, 0] * R[1, 0])
-    r = math.atan2(R[2, 1], R[2, 2])
-    p = math.atan2(-R[2, 0], sy)
-    y = math.atan2(R[1, 0], R[0, 0])
-    return [r, p, y]
+    if sequence == 'zyx':  # Default sequence
+        sy = math.sqrt(R[0, 0] * R[0, 0] + R[1, 0] * R[1, 0])
+        singular = sy < 1e-6
+        if not singular:
+            r = math.atan2(R[2, 1], R[2, 2])
+            p = math.atan2(-R[2, 0], sy)
+            y = math.atan2(R[1, 0], R[0, 0])
+        else:
+            r = math.atan2(-R[1, 2], R[1, 1])
+            p = math.atan2(-R[2, 0], sy)
+            y = 0
+        return [y, p, r]
+
+    elif sequence == 'xyz':
+        sy = math.sqrt(R[1, 2] * R[1, 2] + R[2, 2] * R[2, 2])
+        singular = sy < 1e-6
+        if not singular:
+            r = math.atan2(R[1, 2], R[2, 2])
+            p = math.atan2(-R[0, 2], sy)
+            y = math.atan2(R[0, 1], R[0, 0])
+        else:
+            r = math.atan2(-R[2, 1], R[2, 2])
+            p = math.atan2(-R[0, 2], sy)
+            y = 0
+        return [r, p, y]
+
+    elif sequence == 'yxz':
+        sy = math.sqrt(R[0, 2] * R[0, 2] + R[2, 2] * R[2, 2])
+        singular = sy < 1e-6
+        if not singular:
+            r = math.atan2(R[0, 2], R[2, 2])
+            p = math.atan2(-R[1, 2], sy)
+            y = math.atan2(R[1, 0], R[1, 1])
+        else:
+            r = math.atan2(-R[2, 0], R[2, 2])
+            p = math.atan2(-R[1, 2], sy)
+            y = 0
+        return [y, r, p]
+
+    else:
+        raise ValueError(f"Unsupported rotation sequence: {sequence}")
 
 
 def euler_to_rotation_matrix(euler):
