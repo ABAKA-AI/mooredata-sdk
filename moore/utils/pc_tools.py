@@ -130,6 +130,7 @@ def write_pcd(points, out_path, head=None, data_mode='ascii'):
     :param data_mode: ascii, binary
     :return:
     """
+    point_num = points.shape[0]
     if head is None:
         head = {
             "FIELDS": ["x", "y", "z", "intensity"],
@@ -137,19 +138,26 @@ def write_pcd(points, out_path, head=None, data_mode='ascii'):
             "TYPE": ["F", "F", "F", "F"],
             "COUNT": ["1", "1", "1", "1"]
         }
-    point_num = points.shape[0]
-
     header = f'# .PCD v0.7 - Point Cloud Data file format\n' \
              f'VERSION 0.7\n' \
              f'FIELDS {" ".join(head["FIELDS"])}\n' \
              f'SIZE {" ".join(head["SIZE"])}\n' \
              f'TYPE {" ".join(head["TYPE"])}\n' \
              f'COUNT {" ".join(head["COUNT"])}\n' \
-             f'WIDTH {point_num}\n' \
-             'HEIGHT 1\n' \
-             'VIEWPOINT 0 0 0 1 0 0 0\n' \
+             f'WIDTH {point_num if "WIDTH" not in head else head["WIDTH"]}\n' \
+             f'HEIGHT {"1" if "HEIGHT" not in head else head["HEIGHT"]}\n' \
+             f'VIEWPOINT {"0 0 0 1 0 0 0" if "VIEWPOINT" not in head else head["VIEWPOINT"]}\n' \
              f'POINTS {point_num}\n' \
              f'DATA {data_mode}'
+
+    width_match = re.search(r'WIDTH (\d+)', header)
+    height_match = re.search(r'HEIGHT (\d+)', header)
+
+    width = int(width_match.group(1))
+    height = int(height_match.group(1))
+    if width * height != point_num:
+        raise Exception('Incorrect header <WIDTH> OR <HEIGHT>')
+
     type_map = {('U', '1'): 'B', ('U', '2'): 'H', ('U', '4'): 'I', ('U', '8'): 'Q',
                 ('F', '4'): 'f', ('F', '8'): 'd',
                 ('I', '1'): 'c', ('I', '2'): 'h', ('I', '4'): 'i'}
@@ -167,17 +175,17 @@ def write_pcd(points, out_path, head=None, data_mode='ascii'):
             handle.write(header.encode())
             handle.write(b'\n')
 
-            pack_string = ''.join([type_map[(type, head['SIZE'][idx])] for idx, type in enumerate(head['TYPE'])])
+            pack_string = ''.join(
+                [type_map[(type, size)] * int(count) for type, size, count in
+                 zip(head['TYPE'], head['SIZE'], head['COUNT'])]
+            )
             points_string = []
 
             for point in points:
-                # binary_data = [
-                #     struct.pack(pack, float(point[idx])) if pack in ('f', 'd') else struct.pack(pack, int(point[idx])) for
-                #     idx, pack in enumerate(pack_string)]
                 binary_data = [
-                    struct.pack(pack, np.float32(point[idx])) if pack == 'f' else (
-                        struct.pack(pack, np.float64(point[idx])) if pack == 'd' else struct.pack(pack, int(point[idx]))
-                    )
+                    struct.pack(pack, int(point[idx]) if pack not in ['f', 'd'] else (
+                        np.float32(point[idx]) if pack == 'f' else np.float64(point[idx])
+                    ))
                     for idx, pack in enumerate(pack_string)
                 ]
                 points_string.append(b''.join(binary_data))
@@ -186,7 +194,7 @@ def write_pcd(points, out_path, head=None, data_mode='ascii'):
 
     elif data_mode == 'binary_compressed':
         # TODO: binary_compressed
-        raise MooreNotImplementException('Temporarily unable to read binary_compressed data.')
+        raise MooreNotImplementException('Temporarily unable to write binary_compressed data.')
     else:
         raise 'Unknown pcd data type.'
 
