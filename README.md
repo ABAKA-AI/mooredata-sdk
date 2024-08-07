@@ -9,12 +9,6 @@
       </a>
     </sup>
     &nbsp;&nbsp;&nbsp;
-    <span><font size="150">MOLARDATA website</font></span>
-    <sup>
-      <a href="https://www.molardata.com/">
-        <i><font size="5">HOT</font></i>
-      </a>
-    </sup>
   </div>
   <div>&nbsp;</div>
 
@@ -246,8 +240,7 @@ Please refer to [examples.md](example/examples.md) to learn more usage about MOO
 
 
 ## Contact Us
-
-- wxj@molardata.com
+if you have any problems with the sdk please contact us at [wxj@molardata.com]
 
 ## License
 
