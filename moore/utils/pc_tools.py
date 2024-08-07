@@ -64,7 +64,7 @@ def read_pcd(pcd_path):
                 _ = f.readline()
             data = np.fromfile(f, dtype=dt)
         # 去除每列都是0的点
-        # data = np.array([point for point in data if not all(value == 0 for value in point)])
+        data = np.array([point for point in data if not all(value == 0 for value in point)])
 
         names = dt.names
         counter_dict = {}
@@ -461,7 +461,7 @@ def rotation_matrix_to_euler(R, sequence='xyz'):
     :param sequence: Rotation sequence as a string, e.g., 'xyz', 'zyx'
     :return: A list of Euler angles [alpha, beta, gamma] in radians
     """
-    if sequence == 'zyx':  # Default sequence
+    if sequence == 'xyz':  # Default sequence
         sy = math.sqrt(R[0, 0] * R[0, 0] + R[1, 0] * R[1, 0])
         singular = sy < 1e-6
         if not singular:
@@ -472,33 +472,33 @@ def rotation_matrix_to_euler(R, sequence='xyz'):
             r = math.atan2(-R[1, 2], R[1, 1])
             p = math.atan2(-R[2, 0], sy)
             y = 0
-        return [y, p, r]
+        return [r, p, y]
 
-    elif sequence == 'xyz':
+    elif sequence == 'zyx':
         sy = math.sqrt(R[1, 2] * R[1, 2] + R[2, 2] * R[2, 2])
         singular = sy < 1e-6
         if not singular:
-            r = math.atan2(R[1, 2], R[2, 2])
-            p = math.atan2(-R[0, 2], sy)
-            y = math.atan2(R[0, 1], R[0, 0])
+            r = -math.atan2(R[1, 2], R[2, 2])
+            p = -math.atan2(-R[0, 2], sy)
+            y = -math.atan2(R[0, 1], R[0, 0])
         else:
-            r = math.atan2(-R[2, 1], R[2, 2])
-            p = math.atan2(-R[0, 2], sy)
+            r = -math.atan2(-R[2, 1], R[2, 2])
+            p = -math.atan2(-R[0, 2], sy)
             y = 0
-        return [r, p, y]
+        return [y, p, r]
 
-    elif sequence == 'yxz':
-        sy = math.sqrt(R[0, 2] * R[0, 2] + R[2, 2] * R[2, 2])
-        singular = sy < 1e-6
-        if not singular:
-            r = math.atan2(R[0, 2], R[2, 2])
-            p = math.atan2(-R[1, 2], sy)
-            y = math.atan2(R[1, 0], R[1, 1])
-        else:
-            r = math.atan2(-R[2, 0], R[2, 2])
-            p = math.atan2(-R[1, 2], sy)
-            y = 0
-        return [y, r, p]
+    # elif sequence == 'yxz':
+    #     sy = math.sqrt(R[0, 2] * R[0, 2] + R[2, 2] * R[2, 2])
+    #     singular = sy < 1e-6
+    #     if not singular:
+    #         r = math.atan2(R[0, 2], R[2, 2])
+    #         p = math.atan2(-R[1, 2], sy)
+    #         y = math.atan2(R[1, 0], R[1, 1])
+    #     else:
+    #         r = math.atan2(-R[2, 0], R[2, 2])
+    #         p = math.atan2(-R[1, 2], sy)
+    #         y = 0
+    #     return [y, r, p]
 
     else:
         raise ValueError(f"Unsupported rotation sequence: {sequence}")
