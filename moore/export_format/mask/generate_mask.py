@@ -46,6 +46,10 @@ class ExportMask(ExportData):
         grey_values = [(i, i, i) for i in range(len(color_mapping))]
         grey_mapping = dict(zip(list(color_mapping.keys()), grey_values))
 
+        if len(mask_data) == 0:
+            raise Exception('No mask data found')
+
+        out_root = ''
         for i in tqdm(range(len(mask_data))):
             url = mask_data[i]['info']
             try:
