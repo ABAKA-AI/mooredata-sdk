@@ -64,7 +64,7 @@ def read_pcd(pcd_path):
                 _ = f.readline()
             data = np.fromfile(f, dtype=dt)
         # 去除每列都是0的点
-        data = np.array([point for point in data if not all(value == 0 for value in point)])
+        data = data[np.any([data[name] != 0 for name in data.dtype.names], axis=0)]
 
         names = dt.names
         counter_dict = {}
@@ -144,9 +144,9 @@ def write_pcd(points, out_path, head=None, data_mode='ascii'):
              f'SIZE {" ".join(head["SIZE"])}\n' \
              f'TYPE {" ".join(head["TYPE"])}\n' \
              f'COUNT {" ".join(head["COUNT"])}\n' \
-             f'WIDTH {point_num if "WIDTH" not in head else head["WIDTH"]}\n' \
-             f'HEIGHT {"1" if "HEIGHT" not in head else head["HEIGHT"]}\n' \
-             f'VIEWPOINT {"0 0 0 1 0 0 0" if "VIEWPOINT" not in head else head["VIEWPOINT"]}\n' \
+             f'WIDTH {point_num if "WIDTH" not in head else head["WIDTH"][0]}\n' \
+             f'HEIGHT {"1" if "HEIGHT" not in head else head["HEIGHT"][0]}\n' \
+             f'VIEWPOINT {"0 0 0 1 0 0 0" if "VIEWPOINT" not in head else " ".join(head["VIEWPOINT"])}\n' \
              f'POINTS {point_num}\n' \
              f'DATA {data_mode}'
 
