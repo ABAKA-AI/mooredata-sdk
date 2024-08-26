@@ -240,7 +240,7 @@ Please refer to [examples.md](example/examples.md) to learn more usage about MOO
 
 
 ## About Us
-ABAKA AI, provides ABAKA Platform (AI-Based Augmented Virtual Associate) and ACE Service (Accurate & Efficient), is committed to becoming a data navigator in the AI industry. Click to [Try Our Moore Platform](https://app.molardata.com/) .
+ABAKA AI, provides ABAKA Platform (AI-Based Augmented Virtual Associate) and ACE Service (Accurate & Efficient), is committed to becoming a data navigator in the AI industry. Click to [Try Our Moore Platform](https://app.abaka.ai/saas) .
 
 ABAKA AI collaborates with over 1000 leading global tech firms and research institutions across the Automobile AI, Generative AI, and Embodied AI sectors. Our Global Offices in Singapore, Paris, and Silicon Valley spearhead our worldwide expansion. 
 
