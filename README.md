@@ -44,7 +44,7 @@ Learn more about ABAKA [here](https://www.abaka.ai/)!
 - [Installation](#installation)
 - [What can we do](#what-can-we-do)
 - [Usage](#usage)
-- [Contact us](#contact-us)
+- [About Us](#contact-us)
 - [License](#license)
 
 ## Changelog
@@ -239,9 +239,13 @@ def test_pcd2bin():
 Please refer to [examples.md](example/examples.md) to learn more usage about MOORE SDK.
 
 
-## Contact Us
-if you have any problems with the sdk please contact us at [wxj@molardata.com]
+## About Us
+ABAKA AI, provides ABAKA Platform (AI-Based Augmented Virtual Associate) and ACE Service (Accurate & Efficient), is committed to becoming a data navigator in the AI industry. Click to [Try Our Moore Platform](https://app.molardata.com/) .
+
+ABAKA AI collaborates with over 1000 leading global tech firms and research institutions across the Automobile AI, Generative AI, and Embodied AI sectors. Our Global Offices in Singapore, Paris, and Silicon Valley spearhead our worldwide expansion. 
+
+Find us on [X](https://x.com/abaka_ai) | [LinkedIn](https://www.linkedin.com/company/abaka-ai) | [YouTube](https://www.youtube.com/@abaka_ai) . 
 
 ## License
 
-MOORE SDK is released under the MIT license.
+MOOREData SDK is released under the MIT license.
