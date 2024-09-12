@@ -39,12 +39,14 @@ def read_pcd(pcd_path):
             else:
                 headers[key] = fields[1:]
 
+    temp_headers_fields = [i + str(idx) for idx, i in enumerate(headers["FIELDS"])]
+
     type_size_map = {('U', '1'): np.uint8, ('U', '2'): np.uint16, ('U', '4'): np.uint32, ('U', '8'): np.uint64,
                      ('F', '4'): np.float32, ('F', '8'): np.float64,
                      ('I', '1'): np.int8, ('I', '2'): np.int16, ('I', '4'): np.int32}
 
     dtype_list = []
-    for name, field_type, size, count in zip(headers["FIELDS"], headers["TYPE"], headers["SIZE"], headers["COUNT"]):
+    for name, field_type, size, count in zip(temp_headers_fields, headers["TYPE"], headers["SIZE"], headers["COUNT"]):
         if int(count) > 1:
             dtype_list.extend([(name + '_' + str(idx), type_size_map[(field_type, size)]) for idx, _ in enumerate(range(int(count)))])
         else:
@@ -52,7 +54,7 @@ def read_pcd(pcd_path):
 
     dt = np.dtype(dtype_list)
 
-    num_fields = len(headers['FIELDS'])
+    num_fields = len(dtype_list)
     if headers['DATA'] == 'ascii':
         df = dd.read_csv(pcd_path, skiprows=headers['data_start'], sep=" ", header=None, assume_missing=True,
                          dtype=dt)
@@ -66,21 +68,21 @@ def read_pcd(pcd_path):
         # 去除每列都是0的点
         data = data[np.any([data[name] != 0 for name in data.dtype.names], axis=0)]
 
-        names = dt.names
-        counter_dict = {}
-        new_names = []
-        for i, el in enumerate(names):
-            if names.count(el) > 1:
-                if el not in counter_dict:
-                    counter_dict[el] = 1
-                else:
-                    counter_dict[el] += 1
-                new_names.append(el + str(counter_dict[el]))
-            else:
-                new_names.append(el)
-
-        for old_name, new_name in zip(names, new_names):
-            data.dtype.names = [name.replace(old_name, new_name) for name in data.dtype.names]
+        # names = dt.names
+        # counter_dict = {}
+        # new_names = []
+        # for i, el in enumerate(names):
+        #     if names.count(el) > 1:
+        #         if el not in counter_dict:
+        #             counter_dict[el] = 1
+        #         else:
+        #             counter_dict[el] += 1
+        #         new_names.append(el + str(counter_dict[el]))
+        #     else:
+        #         new_names.append(el)
+        #
+        # for old_name, new_name in zip(names, new_names):
+        #     data.dtype.names = [name.replace(old_name, new_name) for name in data.dtype.names]
 
         pc_points_empty = np.zeros((headers['POINTS'],), dtype=dt)
         for i, name in enumerate(data.dtype.names):
@@ -262,14 +264,13 @@ def pcd_binary2ascii(input_file, output_file):
     print('Conversion complete!')
 
 
-def filter_points_in_boxes(pcd_file, boxes_list):
+def filter_points_in_boxes(point_cloud, boxes_list):
     """
     Given point cloud and a list of 3D boxes, remove the points inside the boxes.
 
     @param point_cloud: (N, 3) numpy.ndarray, N points.
     @param boxes_list: list of boxes with format [x, y, z, roll, pitch, yaw, length, width, height].
     """
-    point_cloud, headers = read_pcd(pcd_file)
     try:
         intensity_point = point_cloud[:, 3]
     except:
