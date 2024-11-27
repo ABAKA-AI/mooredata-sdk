@@ -119,7 +119,7 @@ def read_pcd(pcd_path):
     return pc_points, headers
 
 
-def write_pcd(points, out_path, head=None, data_mode='ascii'):
+def write_pcd(points, out_path, head=None, data_mode='binary'):
     """
     write pcd file
     :param points: 2-d np.array
