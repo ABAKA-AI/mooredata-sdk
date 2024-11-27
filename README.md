@@ -2,7 +2,7 @@
   <img src="resources/abaka-ai.png" width="100%"/>
   <div>&nbsp;</div>
   <div align="center">
-    <span><font size="150">ABAKA website</font></span>
+    <span><font size="150">Abaka AI website</font></span>
     <sup>
       <a href="https://www.abaka.ai/">
         <i><font size="5">HOT</font></i>
@@ -18,24 +18,24 @@
 
 </div>
 
-# MOOREData SDK | For Python
+# moore-sdk | For Python
 
-Welcome to `MOORE SDK`, an open-source Software Development Kit that forms the backbone of the MOORE platform. Designed
+Welcome to `moore-sdk`, an open-source Software Development Kit that forms the backbone of the Moore platform. Designed
 to convert data between MOORE’s native format and widely-used, universal data structures such as COCO, YOLO, LABELME,
-KITTI, VOC, MOORE SDK helps to streamline and simplify your data operations.
+KITTI, VOC, moore-sdk helps to streamline and simplify your data operations.
 
 The SDK is more than just a converter. It’s a swiss army knife of data processing tools. It comes loaded with an
 assortment of handy utility functions often used in data processing workflows, such as Calculate the area of a polygon
 or determine if a point is inside a polygon.
 
-Whether you’re moving data, cleaning data, transforming data, or just managing it, the MOORE SDK has got you covered
+Whether you’re moving data, cleaning data, transforming data, or just managing it, the moore-sdk has got you covered
 with powerful features that make your work simpler and easier. Built for developers, engineers and data scientists, this
 SDK aims to make your data-heavy processes more seamless and efficient.
 
-Stay tuned to get more details about the features, capabilities, and the simplicity MOORE SDK brings to your data
+Stay tuned to get more details about the features, capabilities, and the simplicity moore-sdk brings to your data
 operations.
 
-Learn more about ABAKA [here](https://www.abaka.ai/)!
+Learn more about Abaka AI [here](https://www.abaka.ai/)!
 
 ## Overview
 
@@ -70,7 +70,7 @@ are ahead of other python third-party point cloud libraries in terms of efficien
 - Support Quaternion to Euler angle
 - Support PNP <br>
 
-[2023-07-21] MOORE SDK v1.0.0 is released. <br>
+[2023-07-21] moore-sdk v1.0.0 is released. <br>
 
 ## requirements
 
@@ -233,19 +233,19 @@ def test_to_string():
 def test_pcd2bin():
     bin_path = './bin'
     pcd_path = './pcd'
-    mooredata.pcd2bin(pcd_path, bin_path)
+    moore.pcd2bin(pcd_path, bin_path)
 ```
 
-Please refer to [examples.md](example/examples.md) to learn more usage about MOORE SDK.
+Please refer to [examples.md](example/examples.md) to learn more usage about moore-sdk.
 
 
 ## About Us
-ABAKA AI, provides ABAKA Platform (AI-Based Augmented Virtual Associate) and ACE Service (Accurate & Efficient), is committed to becoming a data navigator in the AI industry. Click to [Try Our Moore Platform](https://app.abaka.ai/saas) .
+Abaka AI, provides Moore Platform (AI-Based Augmented Virtual Associate) and ACE Service (Accurate & Efficient), is committed to becoming a data navigator in the AI industry. Click to [Try Our Moore Platform](https://app.abaka.ai/saas) .
 
-ABAKA AI collaborates with over 1000 leading global tech firms and research institutions across the Automobile AI, Generative AI, and Embodied AI sectors. Our Global Offices in Singapore, Paris, and Silicon Valley spearhead our worldwide expansion. 
+Abaka AI collaborates with over 1000 leading global tech firms and research institutions across the Automobile AI, Generative AI, and Embodied AI sectors. Our Global Offices in Singapore, Paris, and Silicon Valley spearhead our worldwide expansion. 
 
 Find us on [X](https://x.com/abaka_ai) | [LinkedIn](https://www.linkedin.com/company/abaka-ai) | [YouTube](https://www.youtube.com/@abaka_ai) . 
 
 ## License
 
-MOOREData SDK is released under the MIT license.
+moore-sdk is released under the MIT license.
