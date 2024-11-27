@@ -22,4 +22,3 @@ mapping = {"背景background": 'background', "草地lawn": 'lawn', "道路road":
 # coco
 out_path = "./output"
 Export.moore_json2coco(source_data=source_data, out_path=out_path, mapping=mapping)
-

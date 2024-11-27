@@ -88,14 +88,14 @@ class ExportMask(ExportData):
                         continue
                     drawType = l.data.drawType
                     # OK
-                    if drawType == 'POLYGON':
+                    if drawType == 'POLYGON' or drawType == 'OCR' or drawType == 'INCLINED' or drawType == 'OCR_INCLINE_RECT':
                         label = l.data.label
                         color_grey = grey_mapping[label]
                         item = l.data.points
                         area = np.array([[item[i] * 2, item[i + 1] * 2] for i in range(0, len(item), 2)], np.int32)
                         cv2.fillPoly(img, [area], color_grey)
                     # OK
-                    elif drawType == 'RECTANGLE':
+                    elif drawType == 'RECTANGLE' or drawType == 'OCR_RECT':
                         label = l.data.label
                         color_grey = grey_mapping[label]
                         top_left_x, top_left_y, bottom_right_x, bottom_right_y = l.data.points
@@ -107,7 +107,7 @@ class ExportMask(ExportData):
                             np.int32)
                         cv2.fillPoly(img, [area], color_grey)
                     # OK
-                    else:
+                    elif drawType == 'MASK' or drawType == 'MASK_BLOCK':
                         path_list = []
                         for item in l.data.points:
                             path_list.append([[item[i] * 2, item[i + 1] * 2] for i in range(0, len(item), 2)])
@@ -119,6 +119,30 @@ class ExportMask(ExportData):
                         label = l.data.label
                         color_grey = grey_mapping[label]
                         cv2.fillPoly(img, np_paths, color=color_grey)
+                    elif drawType == 'LINE':
+                        label = l.data.label
+                        color_grey = grey_mapping[label]
+                        points = l.data.points
+                        for i in range(2, len(points), 2):
+                            cv2.line(img, (int(points[i-2] * 2), int(points[i-1] * 2)), (int(points[i] * 2), int(points[i+1] * 2)),
+                                    color_grey, 2)
+                    elif drawType == 'POINT':
+                        label = l.data.label
+                        color_grey = grey_mapping[label]
+                        item = l.data.points
+                        items = [[item[i], item[i + 1]] for i in range(0, len(item), 2)]
+                        for x, y in items:
+                            cv2.circle(img, (int(x * 2), int(y * 2)), 2, color_grey, -1)
+                    elif drawType == 'CIRCLE':
+                        label = l.data.label
+                        color_grey = grey_mapping[label]
+                        item = l.data.points
+                        xmin, ymin, xmax, ymax = item
+                        center = ((xmin + xmax) / 2, (ymin + ymax) / 2)
+                        radius = (xmax - xmin) / 2
+                        cv2.circle(img, (int(center[0] * 2), int(center[1] * 2)), int(radius * 2), color_grey, -1)
+                    else:
+                        continue
             new_img = img[1::2, 1::2, :]
             new_img = cv2.cvtColor(new_img, cv2.COLOR_BGR2GRAY)
 
