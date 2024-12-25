@@ -1,5 +1,5 @@
 # -*-coding:utf-8 -*-
-from moore import Visual
+from mooredata import Visual
 
 
 data_path = "./test.json"

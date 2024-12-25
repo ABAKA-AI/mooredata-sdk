@@ -12,27 +12,27 @@
   </div>
   <div>&nbsp;</div>
 
-[![PyPI](https://img.shields.io/pypi/v/Moore-SDK)](https://pypi.org/project/Moore-SDK/)
+[![PyPI - Version](https://img.shields.io/pypi/v/MooreData-SDK)](https://pypi.org/project/MooreData-SDK/)
 [![docs](https://img.shields.io/badge/docs-latest-blue)](README.md)
 [![license](https://img.shields.io/github/license/mashape/apistatus)](LICENSE)
 
 </div>
 
-# moore-sdk | For Python
+# mooredata-sdk | For Python
 
-Welcome to `moore-sdk`, an open-source Software Development Kit that forms the backbone of the Moore platform. Designed
+Welcome to `mooredata-sdk`, an open-source Software Development Kit that forms the backbone of the Moore platform. Designed
 to convert data between MOORE’s native format and widely-used, universal data structures such as COCO, YOLO, LABELME,
-KITTI, VOC, moore-sdk helps to streamline and simplify your data operations.
+KITTI, VOC, mooredata-sdk helps to streamline and simplify your data operations.
 
 The SDK is more than just a converter. It’s a swiss army knife of data processing tools. It comes loaded with an
 assortment of handy utility functions often used in data processing workflows, such as Calculate the area of a polygon
 or determine if a point is inside a polygon.
 
-Whether you’re moving data, cleaning data, transforming data, or just managing it, the moore-sdk has got you covered
+Whether you’re moving data, cleaning data, transforming data, or just managing it, the mooredata-sdk has got you covered
 with powerful features that make your work simpler and easier. Built for developers, engineers and data scientists, this
 SDK aims to make your data-heavy processes more seamless and efficient.
 
-Stay tuned to get more details about the features, capabilities, and the simplicity moore-sdk brings to your data
+Stay tuned to get more details about the features, capabilities, and the simplicity mooredata-sdk brings to your data
 operations.
 
 Learn more about Abaka AI [here](https://www.abaka.ai/)!
@@ -70,7 +70,7 @@ are ahead of other python third-party point cloud libraries in terms of efficien
 - Support Quaternion to Euler angle
 - Support PNP <br>
 
-[2023-07-21] moore-sdk v1.0.0 is released. <br>
+[2023-07-21] mooredata-sdk v1.0.0 is released. <br>
 
 ## requirements
 
@@ -83,8 +83,7 @@ are ahead of other python third-party point cloud libraries in terms of efficien
     tqdm
     dynaconf
     scipy
-    dask
-    dask-expr
+    dask[dataframe]
     python-lzf
     Pillow
 ```
@@ -94,7 +93,7 @@ are ahead of other python third-party point cloud libraries in terms of efficien
 ### Install with PyPi (pip)
 Please note that abava-sdk is deprecated and no longer updated, please install our sdk with the following command
 ```sh
-pip install moore-sdk
+pip install mooredata-sdk
 ```
 
 ## What can we do
@@ -176,14 +175,16 @@ pip install moore-sdk
 ### get source data
 
 ```python
-import moore
+import mooredata
 
 """
 You can get your ak/sk in the platform's "Team Space" -> "Setting"
 """
-ak = Access Key
-sk = Secret Key
-client = moore.Client(ak, sk)
+ak = Access
+Key
+sk = Secret
+Key
+client = mooredata.Client(ak, sk)
 
 """
 After creating an export task, you can see the export task id of the corresponding task
@@ -195,7 +196,7 @@ source_data = client.get_data(export_task_id)
 ### data format
 
 ```python
-from moore import Export
+from mooredata import Export
 
 mapping = {"背景background": 'background', "草地lawn": 'lawn', "道路road": 'road'}
 # coco
@@ -207,7 +208,7 @@ Export.moore_json2coco(source_data=source_data, out_path=out_path)
 ### visualize
 
 ```python
-from moore import Visual
+from mooredata import Visual
 
 data_path = "./data.json"
 out_path = "./output"
@@ -217,26 +218,29 @@ Visual.visual_coco(source_data, data_path, out_path)
 ### utils
 
 ```python
+import mooredata
+
+
 def test_isin_external_rectangle():
     point = [55, 100]
     vertex_lst = [[50, 50], [200, 200], [200, 50], [50, 50]]
-    tag = moore.isin_external_rectangle(point, vertex_lst)
+    tag = mooredata.isin_external_rectangle(point, vertex_lst)
     return tag
 
 
 def test_to_string():
     test_string = b'example_string'
-    string = moore.b2string(test_string)
+    string = mooredata.b2string(test_string)
     print(string)
 
 
 def test_pcd2bin():
     bin_path = './bin'
     pcd_path = './pcd'
-    moore.pcd2bin(pcd_path, bin_path)
+    mooredata.pcd2bin(pcd_path, bin_path)
 ```
 
-Please refer to [examples.md](example/examples.md) to learn more usage about moore-sdk.
+Please refer to [examples.md](example/examples.md) to learn more usage about mooredata-sdk.
 
 
 ## About Us
@@ -248,4 +252,4 @@ Find us on [X](https://x.com/abaka_ai) | [LinkedIn](https://www.linkedin.com/com
 
 ## License
 
-moore-sdk is released under the MIT license.
+mooredata-sdk is released under the MIT license.

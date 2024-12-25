@@ -1,8 +1,8 @@
 # -*-coding:utf-8 -*-
 import json
 
-import moore
-from moore import Check
+import mooredata
+from mooredata import Check
 
 """
 You can get your ak/sk in the platform's "Team Space" -> "Setting"
@@ -10,7 +10,7 @@ You can get your ak/sk in the platform's "Team Space" -> "Setting"
 """
 ak = "Access Key"
 sk = "Secret Key"
-client = moore.Client(ak, sk)
+client = mooredata.Client(ak, sk)
 
 """
 After creating an export task, you can see the export task id of the corresponding task 
