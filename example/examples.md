@@ -1,4 +1,4 @@
-# MOORE SDK | Examples
+# MOOREDATA SDK | Examples
 ## Overview
 + Format
 + Visualize

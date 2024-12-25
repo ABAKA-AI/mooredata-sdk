@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="resources/abaka-ai.png" width="100%"/>
+  <img src="resources/AbakaAI.png" width="100%"/>
   <div>&nbsp;</div>
   <div align="center">
     <span><font size="150">Abaka AI website</font></span>
@@ -20,8 +20,8 @@
 
 # mooredata-sdk | For Python
 
-Welcome to `mooredata-sdk`, an open-source Software Development Kit that forms the backbone of the Moore platform. Designed
-to convert data between MOORE’s native format and widely-used, universal data structures such as COCO, YOLO, LABELME,
+Welcome to `mooredata-sdk`, an open-source Software Development Kit that forms the backbone of the MooreData platform. Designed
+to convert data between MooreData’s native format and widely-used, universal data structures such as COCO, YOLO, LABELME,
 KITTI, VOC, mooredata-sdk helps to streamline and simplify your data operations.
 
 The SDK is more than just a converter. It’s a swiss army knife of data processing tools. It comes loaded with an
@@ -100,74 +100,74 @@ pip install mooredata-sdk
 
 ### Data Format
 
-+ [MOORE data -> COCO data](https://github.com/ABAKA-AI/mooresdk/blob/main/moore/export_format/coco/export_coco.py)
-+ [MOORE data -> LABELME data](https://github.com/ABAKA-AI/mooresdk/blob/main/moore/export_format/labelme/export_labelme.py)
-+ [MOORE data -> VOC data](https://github.com/ABAKA-AI/mooresdk/blob/main/moore/export_format/voc/export_voc.py)
-+ [MOORE data -> YOLO data](https://github.com/ABAKA-AI/mooresdk/blob/main/moore/export_format/yolo/export_yolo.py)
-+ [MOORE data -> KITTI data](https://github.com/ABAKA-AI/mooresdk/blob/main/moore/export_format/kitti/export_kitti.py)
-+ [MOORE data -> MASK](https://github.com/ABAKA-AI/mooresdk/blob/main/moore/export_format/mask/generate_mask.py)
++ [MOORE data -> COCO data](https://github.com/AbakaAI/mooredata-sdk/blob/main/mooredata/export_format/coco/export_coco.py)
++ [MOORE data -> LABELME data](https://github.com/AbakaAI/mooredata-sdk/blob/main/mooredata/export_format/labelme/export_labelme.py)
++ [MOORE data -> VOC data](https://github.com/AbakaAI/mooredata-sdk/blob/main/mooredata/export_format/voc/export_voc.py)
++ [MOORE data -> YOLO data](https://github.com/AbakaAI/mooredata-sdk/blob/main/mooredata/export_format/yolo/export_yolo.py)
++ [MOORE data -> KITTI data](https://github.com/AbakaAI/mooredata-sdk/blob/main/mooredata/export_format/kitti/export_kitti.py)
++ [MOORE data -> MASK](https://github.com/AbakaAI/mooredata-sdk/blob/main/mooredata/export_format/mask/generate_mask.py)
 
 ### Data Check
 
-+ [count labels number](https://github.com/ABAKA-AI/mooresdk/blob/main/moore/check/statistics.py#L10)
-+ [count specific labels number](https://github.com/ABAKA-AI/mooresdk/blob/main/moore/check/statistics.py#L20)
-+ [count drawtype number](https://github.com/ABAKA-AI/mooresdk/blob/main/moore/check/statistics.py#L32)
-+ [count file number](https://github.com/ABAKA-AI/mooresdk/blob/main/moore/check/statistics.py#L45)
-+ [count image number](https://github.com/ABAKA-AI/mooresdk/blob/main/moore/check/statistics.py#L61)
-+ [count unlabeled image number](https://github.com/ABAKA-AI/mooresdk/blob/main/moore/check/statistics.py#L72)
-+ [count labeled image number](https://github.com/ABAKA-AI/mooresdk/blob/main/moore/check/statistics.py#L89)
++ [count labels number](https://github.com/AbakaAI/mooredata-sdk/blob/main/mooredata/check/statistics.py#L10)
++ [count specific labels number](https://github.com/AbakaAI/mooredata-sdk/blob/main/mooredata/check/statistics.py#L20)
++ [count drawtype number](https://github.com/AbakaAI/mooredata-sdk/blob/main/mooredata/check/statistics.py#L32)
++ [count file number](https://github.com/AbakaAI/mooredata-sdk/blob/main/mooredata/check/statistics.py#L45)
++ [count image number](https://github.com/AbakaAI/mooredata-sdk/blob/main/mooredata/check/statistics.py#L61)
++ [count unlabeled image number](https://github.com/AbakaAI/mooredata-sdk/blob/main/mooredata/check/statistics.py#L72)
++ [count labeled image number](https://github.com/AbakaAI/mooredata-sdk/blob/main/mooredata/check/statistics.py#L89)
 
 ### Data Visualization
 
-+ [visual MOORE data](https://github.com/ABAKA-AI/mooresdk/blob/main/moore/visualize/source/visual_source.py)
-+ [visual COCO data](https://github.com/ABAKA-AI/mooresdk/blob/main/moore/visualize/coco/visual_coco.py)
-+ [visual LABELME data](https://github.com/ABAKA-AI/mooresdk/blob/main/moore/visualize/labelme/visual_labelme.py)
-+ [visual VOC data](https://github.com/ABAKA-AI/mooresdk/blob/main/moore/visualize/voc/visual_voc.py)
-+ [visual YOLO data](https://github.com/ABAKA-AI/mooresdk/blob/main/moore/visualize/yolo/visual_yolo.py)
++ [visual MOORE data](https://github.com/AbakaAI/mooredata-sdk/blob/main/mooredata/visualize/source/visual_source.py)
++ [visual COCO data](https://github.com/AbakaAI/mooredata-sdk/blob/main/mooredata/visualize/coco/visual_coco.py)
++ [visual LABELME data](https://github.com/AbakaAI/mooredata-sdk/blob/main/mooredata/visualize/labelme/visual_labelme.py)
++ [visual VOC data](https://github.com/AbakaAI/mooredata-sdk/blob/main/mooredata/visualize/voc/visual_voc.py)
++ [visual YOLO data](https://github.com/AbakaAI/mooredata-sdk/blob/main/mooredata/visualize/yolo/visual_yolo.py)
 
 ### Computer Vision tools
 
-+ [image data -> base64](https://github.com/ABAKA-AI/mooresdk/blob/main/moore/utils/cv_tools.py#L15)
-+ [base64 -> image data](https://github.com/ABAKA-AI/mooresdk/blob/main/moore/utils/cv_tools.py#L29)
-+ [read url image](https://github.com/ABAKA-AI/mooresdk/blob/main/moore/utils/cv_tools.py#L41)
-+ [get url image size](https://github.com/ABAKA-AI/mooresdk/blob/main/moore/utils/cv_tools.py#L54)
-+ [hexadecimal color values -> RGB](https://github.com/ABAKA-AI/mooresdk/blob/main/moore/utils/cv_tools.py#L67)
-+ [generate random RGB values](https://github.com/ABAKA-AI/mooresdk/blob/main/moore/utils/cv_tools.py#L80)
-+ [drawing boxes on the image](https://github.com/ABAKA-AI/mooresdk/blob/main/moore/utils/cv_tools.py#L87)
-+ [drawing points on the image](https://github.com/ABAKA-AI/mooresdk/blob/main/moore/utils/cv_tools.py#L110)
-+ [drawing polygons on the image](https://github.com/ABAKA-AI/mooresdk/blob/main/moore/utils/cv_tools.py#L127)
-+ [plate mode MASK -> POLYGON](https://github.com/ABAKA-AI/mooresdk/blob/main/moore/utils/cv_tools.py#L216)
-+ [MASK -> RLE](https://github.com/ABAKA-AI/mooresdk/blob/main/moore/utils/cv_tools.py#L231)
-+ [RLE -> MASK](https://github.com/ABAKA-AI/mooresdk/blob/main/moore/utils/cv_tools.py#L244)
-+ [POLYGON -> MASK](https://github.com/ABAKA-AI/mooresdk/blob/main/moore/utils/cv_tools.py#L262)
-+ [determine if the point is inside the outer rectangle](https://github.com/ABAKA-AI/mooresdk/blob/main/moore/utils/cv_tools.py#L278)
-+ [determine if the point is inside the polygon](https://github.com/ABAKA-AI/mooresdk/blob/main/moore/utils/cv_tools.py#L334)
-+ [calculate the polygon area](https://github.com/ABAKA-AI/mooresdk/blob/main/moore/utils/cv_tools.py#L414)
-+ [determining the containment of polygons](https://github.com/ABAKA-AI/mooresdk/blob/main/moore/utils/cv_tools.py#L431)
-+ [skeleton polygon](https://github.com/ABAKA-AI/mooresdk/blob/main/moore/utils/cv_tools.py#L559)
-+ [Determining Polygon Orientation](https://github.com/ABAKA-AI/mooresdk/blob/main/moore/utils/cv_tools.py#L604)
-+ [image de-distortion](https://github.com/ABAKA-AI/mooresdk/blob/main/moore/utils/cv_tools.py#L636)
++ [image data -> base64](https://github.com/AbakaAI/mooredata-sdk/blob/main/mooredata/utils/cv_tools.py#L15)
++ [base64 -> image data](https://github.com/AbakaAI/mooredata-sdk/blob/main/mooredata/utils/cv_tools.py#L29)
++ [read url image](https://github.com/AbakaAI/mooredata-sdk/blob/main/mooredata/utils/cv_tools.py#L41)
++ [get url image size](https://github.com/AbakaAI/mooredata-sdk/blob/main/mooredata/utils/cv_tools.py#L54)
++ [hexadecimal color values -> RGB](https://github.com/AbakaAI/mooredata-sdk/blob/main/mooredata/utils/cv_tools.py#L67)
++ [generate random RGB values](https://github.com/AbakaAI/mooredata-sdk/blob/main/mooredata/utils/cv_tools.py#L80)
++ [drawing boxes on the image](https://github.com/AbakaAI/mooredata-sdk/blob/main/mooredata/utils/cv_tools.py#L87)
++ [drawing points on the image](https://github.com/AbakaAI/mooredata-sdk/blob/main/mooredata/utils/cv_tools.py#L110)
++ [drawing polygons on the image](https://github.com/AbakaAI/mooredata-sdk/blob/main/mooredata/utils/cv_tools.py#L127)
++ [plate mode MASK -> POLYGON](https://github.com/AbakaAI/mooredata-sdk/blob/main/mooredata/utils/cv_tools.py#L216)
++ [MASK -> RLE](https://github.com/AbakaAI/mooredata-sdk/blob/main/mooredata/utils/cv_tools.py#L231)
++ [RLE -> MASK](https://github.com/AbakaAI/mooredata-sdk/blob/main/mooredata/utils/cv_tools.py#L244)
++ [POLYGON -> MASK](https://github.com/AbakaAI/mooredata-sdk/blob/main/mooredata/utils/cv_tools.py#L262)
++ [determine if the point is inside the outer rectangle](https://github.com/AbakaAI/mooredata-sdk/blob/main/mooredata/utils/cv_tools.py#L278)
++ [determine if the point is inside the polygon](https://github.com/AbakaAI/mooredata-sdk/blob/main/mooredata/utils/cv_tools.py#L334)
++ [calculate the polygon area](https://github.com/AbakaAI/mooredata-sdk/blob/main/mooredata/utils/cv_tools.py#L414)
++ [determining the containment of polygons](https://github.com/AbakaAI/mooredata-sdk/blob/main/mooredata/utils/cv_tools.py#L431)
++ [skeleton polygon](https://github.com/AbakaAI/mooredata-sdk/blob/main/mooredata/utils/cv_tools.py#L559)
++ [Determining Polygon Orientation](https://github.com/AbakaAI/mooredata-sdk/blob/main/mooredata/utils/cv_tools.py#L604)
++ [image de-distortion](https://github.com/AbakaAI/mooredata-sdk/blob/main/mooredata/utils/cv_tools.py#L636)
 
 ### Point Cloud tools
 
-+ [read PCD format point clouds](https://github.com/ABAKA-AI/mooresdk/blob/main/moore/utils/pc_tools.py#L13)
-+ [write PCD format point clouds](https://github.com/ABAKA-AI/mooresdk/blob/main/moore/utils/pc_tools.py#L112)
-+ [PCD -> BIN](https://github.com/ABAKA-AI/mooresdk/blob/main/moore/utils/pc_tools.py#L180)
-+ [BIN -> PCD](https://github.com/ABAKA-AI/mooresdk/blob/main/moore/utils/pc_tools.py#L192)
-+ [ascii -> binary](https://github.com/ABAKA-AI/mooresdk/blob/main/moore/utils/pc_tools.py#L217)
-+ [binary -> ascii](https://github.com/ABAKA-AI/mooresdk/blob/main/moore/utils/pc_tools.py#L230)
-+ [removing points from the point cloud 3D box](https://github.com/ABAKA-AI/mooresdk/blob/main/moore/utils/pc_tools.py#L243)
-+ [voxel subsampling](https://github.com/ABAKA-AI/mooresdk/blob/main/moore/utils/pc_tools.py#L274)
-+ [random subsampling](https://github.com/ABAKA-AI/mooresdk/blob/main/moore/utils/pc_tools.py#L306)
-+ [the pnp method computes rotation matrices and translation vectors](https://github.com/ABAKA-AI/mooresdk/blob/main/moore/utils/pc_tools.py#L339)
-+ [calculate the number of points in the 3D box](https://github.com/ABAKA-AI/mooresdk/blob/main/moore/utils/pc_tools.py#L360)
-+ [rotation matrix -> quaternion](https://github.com/ABAKA-AI/mooresdk/blob/main/moore/utils/pc_tools.py#L389)
-+ [rotation matrix -> euler](https://github.com/ABAKA-AI/mooresdk/blob/main/moore/utils/pc_tools.py#L403)
-+ [euler -> rotation matrix](https://github.com/ABAKA-AI/mooresdk/blob/main/moore/utils/pc_tools.py#L416)
-+ [quaternion -> rotation matrix](https://github.com/ABAKA-AI/mooresdk/blob/main/moore/utils/pc_tools.py#L442)
-+ [euler -> quaternion](https://github.com/ABAKA-AI/mooresdk/blob/main/moore/utils/pc_tools.py#L472)
-+ [quaternion -> euler](https://github.com/ABAKA-AI/mooresdk/blob/main/moore/utils/pc_tools.py#L487)
-+ [3Dbox -> corner points](https://github.com/ABAKA-AI/mooresdk/blob/main/moore/utils/pc_tools.py#L512)
++ [read PCD format point clouds](https://github.com/AbakaAI/mooredata-sdk/blob/main/mooredata/utils/pc_tools.py#L13)
++ [write PCD format point clouds](https://github.com/AbakaAI/mooredata-sdk/blob/main/mooredata/utils/pc_tools.py#L112)
++ [PCD -> BIN](https://github.com/AbakaAI/mooredata-sdk/blob/main/mooredata/utils/pc_tools.py#L180)
++ [BIN -> PCD](https://github.com/AbakaAI/mooredata-sdk/blob/main/mooredata/utils/pc_tools.py#L192)
++ [ascii -> binary](https://github.com/AbakaAI/mooredata-sdk/blob/main/mooredata/utils/pc_tools.py#L217)
++ [binary -> ascii](https://github.com/AbakaAI/mooredata-sdk/blob/main/mooredata/utils/pc_tools.py#L230)
++ [removing points from the point cloud 3D box](https://github.com/AbakaAI/mooredata-sdk/blob/main/mooredata/utils/pc_tools.py#L243)
++ [voxel subsampling](https://github.com/AbakaAI/mooredata-sdk/blob/main/mooredata/utils/pc_tools.py#L274)
++ [random subsampling](https://github.com/AbakaAI/mooredata-sdk/blob/main/mooredata/utils/pc_tools.py#L306)
++ [the pnp method computes rotation matrices and translation vectors](https://github.com/AbakaAI/mooredata-sdk/blob/main/mooredata/utils/pc_tools.py#L339)
++ [calculate the number of points in the 3D box](https://github.com/AbakaAI/mooredata-sdk/blob/main/mooredata/utils/pc_tools.py#L360)
++ [rotation matrix -> quaternion](https://github.com/AbakaAI/mooredata-sdk/blob/main/mooredata/utils/pc_tools.py#L389)
++ [rotation matrix -> euler](https://github.com/AbakaAI/mooredata-sdk/blob/main/mooredata/utils/pc_tools.py#L403)
++ [euler -> rotation matrix](https://github.com/AbakaAI/mooredata-sdk/blob/main/mooredata/utils/pc_tools.py#L416)
++ [quaternion -> rotation matrix](https://github.com/AbakaAI/mooredata-sdk/blob/main/mooredata/utils/pc_tools.py#L442)
++ [euler -> quaternion](https://github.com/AbakaAI/mooredata-sdk/blob/main/mooredata/utils/pc_tools.py#L472)
++ [quaternion -> euler](https://github.com/AbakaAI/mooredata-sdk/blob/main/mooredata/utils/pc_tools.py#L487)
++ [3Dbox -> corner points](https://github.com/AbakaAI/mooredata-sdk/blob/main/mooredata/utils/pc_tools.py#L512)
 
 
 ## Usage
@@ -180,10 +180,8 @@ import mooredata
 """
 You can get your ak/sk in the platform's "Team Space" -> "Setting"
 """
-ak = Access
-Key
-sk = Secret
-Key
+ak = Access Key
+sk = Secret Key
 client = mooredata.Client(ak, sk)
 
 """
@@ -244,11 +242,11 @@ Please refer to [examples.md](example/examples.md) to learn more usage about moo
 
 
 ## About Us
-Abaka AI, provides Moore Platform (AI-Based Augmented Virtual Associate) and ACE Service (Accurate & Efficient), is committed to becoming a data navigator in the AI industry. Click to [Try Our Moore Platform](https://app.abaka.ai/saas) .
+Abaka AI, provides MooreData Platform (AI-Based Augmented Virtual Associate) and ACE Service (Accurate & Efficient), is committed to becoming a data navigator in the AI industry. Click to [Try Our MooreData Platform](https://app.abaka.ai/saas) .
 
 Abaka AI collaborates with over 1000 leading global tech firms and research institutions across the Automobile AI, Generative AI, and Embodied AI sectors. Our Global Offices in Singapore, Paris, and Silicon Valley spearhead our worldwide expansion. 
 
-Find us on [X](https://x.com/abaka_ai) | [LinkedIn](https://www.linkedin.com/company/abaka-ai) | [YouTube](https://www.youtube.com/@abaka_ai) . 
+Find us on [X](https://x.com/abaka_ai) | [LinkedIn](https://www.linkedin.com/company/AbakaAI) | [YouTube](https://www.youtube.com/@abaka_ai) . 
 
 ## License
 
