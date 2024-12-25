@@ -75,7 +75,7 @@ are ahead of other python third-party point cloud libraries in terms of efficien
 ## requirements
 
 ```sh
-    python >= 3.9
+    python >= 3.7
     lxml
     numpy
     opencv_python
