@@ -10,7 +10,7 @@ requirements = [r.strip() for r in requirements]
 
 setuptools.setup(
     name='MooreData_SDK',
-    version='1.3.1',
+    version='1.3.2',
     description='MooreData SDK',
     install_requires=requirements,
     long_description=open(
@@ -20,6 +20,7 @@ setuptools.setup(
         )
     ).read(),
     packages=setuptools.find_packages(),
+    python_requires='>=3.9, <4',
     include_package_data=True,
     author='Xinjun Wu',
     author_email='wxj@molardata.com',
