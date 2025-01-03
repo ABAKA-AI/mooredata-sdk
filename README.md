@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="resources/AbakaAI.png" width="100%"/>
+  <img src="resources/abaka-ai.png" width="100%"/>
   <div>&nbsp;</div>
   <div align="center">
     <span><font size="150">Abaka AI website</font></span>
