@@ -443,15 +443,38 @@ def box_points(point_cloud, box):
 def rotation_matrix_to_quaternion(R):
     """
     Convert rotation matrix to quaternion
-    :param R: 3X3 rotation matrix
+    :param R: np.array(), 3X3 rotation matrix
     :return:
     """
-    qw = np.sqrt(1 + R[0, 0] + R[1, 1] + R[2, 2]) / 2
-    qx = (R[2, 1] - R[1, 2]) / (4 * qw)
-    qy = (R[0, 2] - R[2, 0]) / (4 * qw)
-    qz = (R[1, 0] - R[0, 1]) / (4 * qw)
+    trace = np.trace(R)
 
-    return [qx, qy, qz, qw]
+    if trace > 0:
+        S = np.sqrt(trace + 1) * 2
+        w = S / 4
+        x = (R[2, 1] - R[1, 2]) / S
+        y = (R[0, 2] - R[2, 0]) / S
+        z = (R[1, 0] - R[0, 1]) / S
+    else:
+        if R[0, 0] > R[1, 1] and R[0, 0] > R[2, 2]:
+            S = np.sqrt(1 + R[0, 0] - R[1, 1] - R[2, 2]) * 2
+            w = (R[2, 1] - R[1, 2]) / S
+            x = S / 4
+            y = (R[0, 1] + R[1, 0]) / S
+            z = (R[0, 2] + R[2, 0]) / S
+        elif R[1, 1] > R[2, 2]:
+            S = np.sqrt(1 + R[1, 1] - R[0, 0] - R[2, 2]) * 2
+            w = (R[0, 2] - R[2, 0]) / S
+            x = (R[0, 1] + R[1, 0]) / S
+            y = S / 4
+            z = (R[1, 2] + R[2, 1]) / S
+        else:
+            S = np.sqrt(1 + R[2, 2] - R[0, 0] - R[1, 1]) * 2
+            w = (R[1, 0] - R[0, 1]) / S
+            x = (R[0, 2] + R[2, 0]) / S
+            y = (R[1, 2] + R[2, 1]) / S
+            z = S / 4
+
+    return [x, y, z, w]
 
 
 def rotation_matrix_to_euler(R, sequence='xyz'):
