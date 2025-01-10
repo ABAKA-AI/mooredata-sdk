@@ -380,19 +380,22 @@ def pnp_compute_Rt(obj_points, img_points, intrinsic, distortion):
     return rvec, tvec
 
 
-def box_points_num(point_cloud, box):
+def box_points_num(point_cloud, box_center, box_orientation, box_size):
     """
     Calculate the number of points in the 3D box
-    :param point_cloud: []
-    :return: int
+    :param point_cloud: 2d-array
+    :param box_center: center point [x,y,z]
+    :param box_orientation: angle of rotation [r,p,y]
+    :param box_size: size [l,w,h]
+    :return: number of points
     """
-    px, py, pz = point_cloud[:, 0], point_cloud[:, 1], point_cloud[:, 2]
-    cx, cy, cz, r, p, y, l, w, h = box
+    cx, cy, cz = box_center
+    r, p, y = box_orientation
+    l, w, h = box_size
 
     inv_rotation = euler_to_rotation_matrix([float(r), float(p), float(y)])
     t = [cx,cy,cz]
-    # points_centered = np.array([px - cx, py - cy, pz - cz])
-    # points_rotated = np.dot(points_centered.T, inv_rotation)
+
     points_rotated = (np.dot(np.linalg.inv(inv_rotation), point_cloud[:, :3].T - np.reshape(t, (3, 1)))).T
     head = {
         "FIELDS": ["x", "y", "z"],
@@ -413,20 +416,21 @@ def box_points_num(point_cloud, box):
     return num_points
 
 
-def box_points(point_cloud, box):
+def box_points(point_cloud, box_center, box_orientation, box_size):
     """
-    Calculate the number of points in the 3D box
-    :param point_cloud: []
-    :param box: [x, y, z, l, w, h, r, p, y]
-    :return: int
+    Get the points in the 3D box
+    :param point_cloud: 2d-array
+    :param box_center: center point [x,y,z]
+    :param box_orientation: angle of rotation [r,p,y]
+    :param box_size: size [l,w,h]
+    :return: Points in 3D box 2d-array
     """
-    px, py, pz = point_cloud[:, 0], point_cloud[:, 1], point_cloud[:, 2]
-    cx, cy, cz, r, p, y, l, w, h = box
+    cx, cy, cz = box_center
+    r, p, y = box_orientation
+    l, w, h = box_size
 
     inv_rotation = euler_to_rotation_matrix([float(r), float(p), float(y)])
     t = [cx, cy, cz]
-    # points_centered = np.array([px - cx, py - cy, pz - cz])
-    # points_rotated = np.dot(points_centered.T, inv_rotation)
     points_rotated = (np.dot(np.linalg.inv(inv_rotation), point_cloud[:, :3].T - np.reshape(t, (3, 1)))).T
 
     xmin, ymin, zmin = -l / 2, -w / 2, -h / 2
@@ -624,13 +628,17 @@ def quaternion_to_euler(x, y, z, w):
     return roll_x, pitch_y, yaw_z
 
 
-def boxcenter2corners(points):
+def boxcenter2corners(center, orientation, size):
     """
-    Convert 3d box (7 numbers) to 8 corners (21 numbers)
-    :param points: x, y, z, roll, pitch, yaw, length, width, height
-    :return:
+    Convert 3d box to 8 corners
+    :param center: center point [x,y,z]
+    :param orientation: angle of rotation [r,p,y]
+    :param size: size [l,w,h]
+    :return: 8 corners 2d-array
     """
-    x, y, z, roll, pitch, yaw, length, width, height = points
+    x, y, z = center
+    roll, pitch, yaw = orientation
+    length, width, height = size
 
     corners = np.array([
         [-length / 2, -width / 2, -height / 2],
