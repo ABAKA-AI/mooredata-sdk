@@ -2,121 +2,164 @@
 import math
 import re
 import struct
-
 import cv2
 import lzf
 import numpy as np
 import dask.dataframe as dd
+import pandas as pd
 from ..exception import MooreNotImplementException
+from typing import Tuple, Dict
+
+# 预编译正则表达式提升匹配效率
+HEADER_PATTERN = re.compile(
+    r'^(VERSION|FIELDS|SIZE|TYPE|COUNT|WIDTH|HEIGHT|VIEWPOINT|POINTS|DATA)'
+)
+TYPE_MAP = {
+    ('U', 1): np.uint8, ('U', 2): np.uint16, ('U', 4): np.uint32, ('U', 8): np.uint64,
+    ('I', 1): np.int8, ('I', 2): np.int16, ('I', 4): np.int32, ('I', 8): np.int64,
+    ('F', 4): np.float32, ('F', 8): np.float64
+}
 
 
-def read_pcd(pcd_path):
-    """
-    read pcd file
-    :param pcd_path:
-    :return:
-    """
-    headers_lines = 11
+def parse_header(pcd_path: str) -> Tuple[Dict, int]:
+    """解析PCD文件头信息"""
+    headers = {}
+    data_start = 0
+    encoding = 'utf-8'
+
     try:
         with open(pcd_path, 'r') as f:
-            header = [next(f) for _ in range(headers_lines)]
+            lines = [next(f) for _ in range(11)]
     except UnicodeDecodeError:
         with open(pcd_path, 'rb') as f:
-            header = [next(f).decode('ISO-8859-1') for _ in range(headers_lines)]
+            lines = [next(f).decode('latin-1') for _ in range(11)]
+        encoding = 'binary'
 
-    headers = {}
-    pattern = re.compile(r'(VERSION|FIELDS|SIZE|TYPE|COUNT|WIDTH|HEIGHT|VIEWPOINT|POINTS|DATA)')
-    for i, line in enumerate(header):
-        match = pattern.match(line)
-        if match:
-            fields = line.strip().split()
+    for idx, line in enumerate(lines):
+        if match := HEADER_PATTERN.match(line):
             key = match.group()
+            parts = line.strip().split()
             if key == 'DATA':
-                headers[key] = fields[1]
-                headers['data_start'] = i + 1
-            elif key == 'POINTS':
-                headers[key] = int(fields[1])
+                headers[key] = parts[1]
+                data_start = idx + 1
             else:
-                headers[key] = fields[1:]
+                headers[key] = parts[1:] if len(parts) > 1 else parts[1]
 
-    temp_headers_fields = [i + str(idx) for idx, i in enumerate(headers["FIELDS"])]
+    # 类型转换关键字段
+    headers['POINTS'] = int(headers.get('POINTS', 0)[0])
+    headers['WIDTH'] = int(headers.get('WIDTH', [0])[0])
+    headers['HEIGHT'] = int(headers.get('HEIGHT', [0])[0])
+    return headers, data_start, encoding
 
-    type_size_map = {('U', '1'): np.uint8, ('U', '2'): np.uint16, ('U', '4'): np.uint32, ('U', '8'): np.uint64,
-                     ('F', '4'): np.float32, ('F', '8'): np.float64,
-                     ('I', '1'): np.int8, ('I', '2'): np.int16, ('I', '4'): np.int32}
 
-    dtype_list = []
-    for name, field_type, size, count in zip(temp_headers_fields, headers["TYPE"], headers["SIZE"], headers["COUNT"]):
-        if int(count) > 1:
-            dtype_list.extend([(name + '_' + str(idx), type_size_map[(field_type, size)]) for idx, _ in enumerate(range(int(count)))])
+def build_dtype(fields: list, types: list, sizes: list, counts: list) -> np.dtype:
+    """构建结构化数组的dtype"""
+    dtype = []
+    for field, type_char, size, count in zip(fields, types, sizes, counts):
+        np_type = TYPE_MAP.get((type_char.upper(), int(size)), None)
+        if np_type is None:
+            raise ValueError(f"Unsupported type: {type_char}{size}")
+
+        count = int(count)
+        if count > 1:
+            dtype.extend([(f"{field}_{i}", np_type) for i in range(count)])
         else:
-            dtype_list.append((name, type_size_map[(field_type, size)]))
+            dtype.append((field, np_type))
+    return np.dtype(dtype)
 
-    dt = np.dtype(dtype_list)
 
-    num_fields = len(dtype_list)
-    if headers['DATA'] == 'ascii':
-        df = dd.read_csv(pcd_path, skiprows=headers['data_start'], sep=" ", header=None, assume_missing=True,
-                         dtype=dt)
-        pc_points = df.to_dask_array(lengths=True).reshape((-1, num_fields)).compute()
+def read_ascii_data(pcd_path: str, data_start: int, dtype: np.dtype) -> np.ndarray:
+    """读取ASCII格式的点云数据"""
+    try:
+        return np.loadtxt(pcd_path, skiprows=data_start, dtype=dtype)
+    except ValueError:
+        df = pd.read_csv(
+            pcd_path,
+            skiprows=data_start,
+            sep=r'\s+',
+            header=None,
+            engine='python',
+            dtype=dtype.str,
+            on_bad_lines='warn'
+        )
+        return df.iloc[:, :len(dtype.names)].to_numpy().view(dtype)
 
-    elif headers['DATA'] == 'binary':
-        with open(pcd_path, 'rb') as f:
-            for _ in range(headers['data_start']):
-                _ = f.readline()
-            data = np.fromfile(f, dtype=dt)
-        # 去除每列都是0的点
-        data = data[np.any([data[name] != 0 for name in data.dtype.names], axis=0)]
 
-        # names = dt.names
-        # counter_dict = {}
-        # new_names = []
-        # for i, el in enumerate(names):
-        #     if names.count(el) > 1:
-        #         if el not in counter_dict:
-        #             counter_dict[el] = 1
-        #         else:
-        #             counter_dict[el] += 1
-        #         new_names.append(el + str(counter_dict[el]))
-        #     else:
-        #         new_names.append(el)
-        #
-        # for old_name, new_name in zip(names, new_names):
-        #     data.dtype.names = [name.replace(old_name, new_name) for name in data.dtype.names]
+def read_binary_data(pcd_path: str, data_start: int, dtype: np.dtype,
+                     encoding: str) -> np.ndarray:
+    with open(pcd_path, 'rb') as f:
+        for _ in range(data_start):
+            f.readline()
+        return np.fromfile(f, dtype=dtype)
 
-        pc_points_empty = np.zeros((headers['POINTS'],), dtype=dt)
-        for i, name in enumerate(data.dtype.names):
-            pc_points_empty[name] = data[name]
-        pc_points = np.array([pc_points_empty[name] for name in pc_points_empty.dtype.names]).T
 
-    elif headers['DATA'] == 'binary_compressed':
-        with open(pcd_path, 'rb') as f:
-            for _ in range(headers['data_start']):
-                _ = f.readline()
+def read_compressed_data(pcd_path: str, data_start: int, dt: np.dtype,
+                         width: int, height: int) -> np.ndarray:
+    with open(pcd_path, 'rb') as f:
+        for _ in range(data_start):
+            _ = f.readline()
 
-            compressed_size = np.frombuffer(f.read(4), dtype=np.uint32)[0]
-            decompressed_size = np.frombuffer(f.read(4), dtype=np.uint32)[0]
-            compressed_data = f.read(compressed_size)
+        compressed_size = np.frombuffer(f.read(4), dtype=np.uint32)[0]
+        decompressed_size = np.frombuffer(f.read(4), dtype=np.uint32)[0]
+        compressed_data = f.read(compressed_size)
 
-            decompressed_data = lzf.decompress(compressed_data, decompressed_size)
+        decompressed_data = lzf.decompress(compressed_data, decompressed_size)
 
-        pc_points_empty = np.empty(int(headers['WIDTH'][0]), dtype=dt)
+    total_points = width * height
+    pc_points_empty = np.empty(total_points, dtype=dt)
 
-        buffer = memoryview(decompressed_data)
+    buffer = memoryview(decompressed_data)
 
-        for name in dt.names:
-            itemsize = dt.fields[name][0].itemsize
-            bytes = itemsize * int(headers['WIDTH'][0])
-            column = np.frombuffer(buffer[:bytes], dt.fields[name][0])
-            pc_points_empty[name] = column
-            buffer = buffer[bytes:]
-        pc_points = np.array([pc_points_empty[name] for name in pc_points_empty.dtype.names]).T
+    for name in dt.names:
+        itemsize = dt.fields[name][0].itemsize
+        bytes_total = itemsize * total_points
+        column = np.frombuffer(buffer[:bytes_total], dt.fields[name][0])
+        pc_points_empty[name] = column
+        buffer = buffer[bytes_total:]
 
+    return pc_points_empty
+
+
+def read_pcd(pcd_path: str) -> Tuple[np.ndarray, Dict]:
+    """
+    高效读取PCD文件，返回点云数据和头信息
+
+    参数:
+        pcd_path: PCD文件路径
+
+    返回:
+        points: 点云数据(NxM的numpy数组)
+        headers: 头信息字典
+    """
+    # 解析头信息
+    headers, data_start, encoding = parse_header(pcd_path)
+
+    # 构建结构化数据类型
+    dtype = build_dtype(
+        headers['FIELDS'],
+        headers['TYPE'],
+        headers['SIZE'],
+        headers['COUNT']
+    )
+
+    # 根据数据格式进行读取
+    data_format = headers['DATA']
+    if data_format == 'ascii':
+        points = read_ascii_data(pcd_path, data_start, dtype)
+    elif data_format == 'binary':
+        data = read_binary_data(pcd_path, data_start, dtype, encoding)
+        # 过滤全零数据点（根据实际需求可调整）
+        # points = data[~np.all(data.view(np.uint8) == 0, axis=1)]
+        points = data
+    elif data_format == 'binary_compressed':
+        points = read_compressed_data(
+            pcd_path, data_start, dtype, headers['WIDTH'], headers['HEIGHT']
+        )
     else:
-        raise 'Unknown pcd data type.'
+        raise ValueError(f"Unsupported data format: {data_format}")
 
-    headers.pop('data_start')
-    return pc_points, headers
+    # 转换为二维数组视图
+    return np.array(points.view(dtype).tolist()), headers
 
 
 def write_pcd(points, out_path, head=None, data_mode='binary'):
