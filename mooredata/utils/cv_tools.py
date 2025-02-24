@@ -45,7 +45,11 @@ def read_url_image(url):
     :param url: image url
     :return: image
     """
-    res = urllib.request.urlopen(url)
+    try:
+        res = urllib.request.urlopen(url)
+    except:
+        encoded_url = urllib.parse.quote(url, safe=':/?=&')
+        res = urllib.request.urlopen(encoded_url)
     img = np.asarray(bytearray(res.read()), dtype="uint8")
     img = cv2.imdecode(img, cv2.IMREAD_COLOR)
 
