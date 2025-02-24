@@ -84,7 +84,7 @@ class ExportData():
         for labeldata in self.source_data.data:
             label_data_infos_urls = labeldata.info.info.url
             label_data_infos_sizes = []
-            if labeldata.info.info.size:
+            if hasattr(labeldata.info.info, 'size'):
                 label_data_infos_sizes = labeldata.info.info.size
             else:
                 for url in labeldata.info.info.url:
