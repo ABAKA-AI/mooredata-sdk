@@ -32,3 +32,4 @@ def test_pcd2bin():
 if __name__ == '__main__':
     # test_pcd2bin()
     test_bin2pcd()
+
