@@ -440,13 +440,6 @@ def box_points_num(point_cloud, box_center, box_orientation, box_size):
     t = [cx,cy,cz]
 
     points_rotated = (np.dot(np.linalg.inv(inv_rotation), point_cloud[:, :3].T - np.reshape(t, (3, 1)))).T
-    head = {
-        "FIELDS": ["x", "y", "z"],
-        "SIZE": ["4", "4", "4"],
-        "TYPE": ["F", "F", "F"],
-        "COUNT": ["1", "1", "1"]}
-
-    write_pcd(points_rotated, r"D:/test/01_test3.pcd", head, data_mode='binary')
 
     xmin, ymin, zmin = -l / 2, -w / 2, -h / 2
     xmax, ymax, zmax = l / 2, w / 2, h / 2
