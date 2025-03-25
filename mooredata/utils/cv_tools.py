@@ -9,7 +9,6 @@ from collections import namedtuple
 from pprint import pformat
 import cv2
 import numpy as np
-from PIL import Image
 from pathlib import Path
 
 

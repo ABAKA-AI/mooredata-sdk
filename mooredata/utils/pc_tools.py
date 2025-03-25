@@ -3,7 +3,7 @@ import math
 import re
 import struct
 import cv2
-import lzf
+import zlib
 import numpy as np
 import pandas as pd
 from typing import Tuple, Dict
@@ -100,8 +100,9 @@ def read_compressed_data(pcd_path: str, data_start: int, dt: np.dtype,
         decompressed_size = np.frombuffer(f.read(4), dtype=np.uint32)[0]
         compressed_data = f.read(compressed_size)
 
-        decompressed_data = lzf.decompress(compressed_data, decompressed_size)
-
+        # decompressed_data = lzf.decompress(compressed_data, decompressed_size)
+        decompressed_data = zlib.decompress(compressed_data)
+        
     total_points = width * height
     pc_points_empty = np.empty(total_points, dtype=dt)
 

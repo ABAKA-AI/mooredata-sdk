@@ -532,9 +532,9 @@ class ExportNuscenes:
         img_height, img_width = 900, 1600
         target_path = os.path.join(self.output_dir, filename)
         try:
-            from PIL import Image
-            with Image.open(target_path) as img:
-                img_width, img_height = img.size
+            import cv2
+            img = cv2.imread(target_path)
+            img_width, img_height = img.size
         except Exception as e:
             print(f"获取图片尺寸失败: {e}")
 
@@ -948,17 +948,4 @@ class ExportNuscenes:
         self._save_nuscenes_seg_data()
         
         return self.output_dir
-
-
-if __name__ == "__main__":
-    input_file = r'G:\PythonProject\mooresdk\test\moore_format_3Dseg.json'
-    output_dir = r'G:\PythonProject\mooresdk\test\nuscenes_test'
-    lidarseg = True
-    # args = parser.parse_args()
-    # export_nuscenes(input_file, output_dir)
-    with open(input_file, 'r', encoding='utf-8') as f:
-        moore_data = json.load(f)
-
-    converter = ExportNuscenes(moore_data, output_dir)
-    converter.moore_json2nuscenes_lidarseg()
     

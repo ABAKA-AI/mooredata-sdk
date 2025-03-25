@@ -4,7 +4,4 @@ opencv_python
 Requests
 tqdm
 dynaconf
-scipy
-dask[dataframe]
-python-lzf
-Pillow
+pandas
