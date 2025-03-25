@@ -5,9 +5,7 @@ import struct
 import cv2
 import lzf
 import numpy as np
-import dask.dataframe as dd
 import pandas as pd
-from ..exception import MooreNotImplementException
 from typing import Tuple, Dict
 
 # 预编译正则表达式提升匹配效率
@@ -26,7 +24,6 @@ def parse_header(pcd_path: str) -> Tuple[Dict, int]:
     headers = {}
     data_start = 0
     encoding = 'utf-8'
-
     try:
         with open(pcd_path, 'r') as f:
             lines = [next(f) for _ in range(11)]
@@ -239,7 +236,7 @@ def write_pcd(points, out_path, head=None, data_mode='binary'):
 
     elif data_mode == 'binary_compressed':
         # TODO: binary_compressed
-        raise MooreNotImplementException('Temporarily unable to write binary_compressed data.')
+        raise 'Temporarily unable to write binary_compressed data.'
     else:
         raise 'Unknown pcd data type.'
 
@@ -624,7 +621,7 @@ def quaternion_to_rotation_matrix(q):
     ])
 
 
-def euler_to_quaternion(roll, pitch, yaw):
+def euler_to_quaternion(euler):
     """
     Convert euler angles to quaternion
     :param roll:
@@ -632,6 +629,7 @@ def euler_to_quaternion(roll, pitch, yaw):
     :param yaw:
     :return:
     """
+    roll, pitch, yaw = euler
     qx = np.sin(roll / 2) * np.cos(pitch / 2) * np.cos(yaw / 2) - np.cos(roll / 2) * np.sin(pitch / 2) * np.sin(yaw / 2)
     qy = np.cos(roll / 2) * np.sin(pitch / 2) * np.cos(yaw / 2) + np.sin(roll / 2) * np.cos(pitch / 2) * np.sin(yaw / 2)
     qz = np.cos(roll / 2) * np.cos(pitch / 2) * np.sin(yaw / 2) - np.sin(roll / 2) * np.sin(pitch / 2) * np.cos(yaw / 2)
@@ -639,7 +637,7 @@ def euler_to_quaternion(roll, pitch, yaw):
     return [qx, qy, qz, qw]
 
 
-def quaternion_to_euler(x, y, z, w):
+def quaternion_to_euler(quaternion):
     """
     Convert quaternion to euler angles
     :param x:
@@ -648,6 +646,8 @@ def quaternion_to_euler(x, y, z, w):
     :param w:
     :return:
     """
+    x, y, z, w = quaternion
+    
     t0 = +2.0 * (w * x + y * z)
     t1 = +1.0 - 2.0 * (x * x + y * y)
     roll_x = math.atan2(t0, t1)

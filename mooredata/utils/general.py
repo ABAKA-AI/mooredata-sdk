@@ -5,7 +5,9 @@ import json
 import math
 import os
 import cv2
-from ..exception import *
+import requests
+
+from mooredata.core.exception import *
 
 
 def load_json(path):
@@ -80,7 +82,7 @@ def find_last(string, substring):
         if string[i] == substring:
             return i
         if i == 0:
-            raise MooreUnknownException("Sorry! We haven't found the Search Character in this string ")
+            raise "Sorry! We haven't found the Search Character in this string "
 
 
 def s2bytes(data):
@@ -205,3 +207,47 @@ def cutFrames(infile_name, outfile_name, cut):
             saved_name = str(j).zfill(5) + '.jpg'
             cv2.imencode('.jpg', frame)[1].tofile(os.path.join(outfile_name, saved_name))
             print('image of %s is saved' % (os.path.join(outfile_name, saved_name)))
+
+
+def download_file(url: str, target_path: str, timeout: int = 30) -> bool:
+    """
+    下载文件到指定路径
+
+    Args:
+        url: 文件URL
+        target_path: 目标保存路径
+        timeout: 超时时间(秒)
+
+    Returns:
+        下载是否成功
+    """
+    try:
+        # 确保目标目录存在
+        os.makedirs(os.path.dirname(target_path), exist_ok=True)
+
+        # 检查URL是否有效
+        if not url.startswith(('http://', 'https://')):
+            print(f"无效的URL: {url}")
+            return False
+
+        # 下载文件
+        print(f"正在下载: {url} -> {target_path}")
+        response = requests.get(url, stream=True, timeout=timeout)
+        response.raise_for_status()  # 如果请求失败则抛出异常
+
+        # 保存文件
+        with open(target_path, 'wb') as f:
+            for chunk in response.iter_content(chunk_size=8192):
+                if chunk:
+                    f.write(chunk)
+
+        print(f"下载成功: {target_path}")
+        return True
+
+    except requests.exceptions.RequestException as e:
+        print(f"下载失败: {e}")
+        return False
+    except Exception as e:
+        print(f"下载过程中发生错误: {e}")
+        return False
+
