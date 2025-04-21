@@ -88,7 +88,10 @@ class ExportData():
                 label_data_infos_sizes = labeldata.info.info.size
             else:
                 for url in labeldata.info.info.url:
-                    height, width = cv_tools.get_urlimage_size(url)
+                    try:
+                        height, width = cv_tools.get_urlimage_size(url)
+                    except:
+                        height, width = None, None
                     size = {"width": width, "height": height}
                     label_data_infos_sizes.append(size)
             label_data_labels = labeldata.labels

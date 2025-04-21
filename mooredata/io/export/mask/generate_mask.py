@@ -7,8 +7,8 @@ from os.path import join
 from pathlib import Path
 
 import PIL
-import requests
 from PIL import Image
+import requests
 import numpy as np
 import cv2
 from tqdm import tqdm
@@ -52,11 +52,14 @@ class ExportMask(ExportData):
         out_root = ''
         for i in tqdm(range(len(mask_data))):
             url = mask_data[i]['info']
-            try:
-                height = mask_data[i]['size']['height']
-                width = mask_data[i]['size']['width']
-            except:
-                height, width = cv_tools.get_urlimage_size(url)
+            print(url)
+            # try:
+            height = mask_data[i]['size']['height']
+            width = mask_data[i]['size']['width']
+            if not height or not width:
+                continue
+            # except:
+            #     height, width = cv_tools.get_urlimage_size(url)
             img = np.zeros((height * 2, width * 2, 3), np.uint8)
             labels = mask_data[i]['labels']
 
@@ -146,7 +149,7 @@ class ExportMask(ExportData):
             new_img = img[1::2, 1::2, :]
             new_img = cv2.cvtColor(new_img, cv2.COLOR_BGR2GRAY)
 
-            lbl_pil = PIL.Image.fromarray(new_img.astype(np.uint8), mode="P")
+            lbl_pil = Image.fromarray(new_img.astype(np.uint8), mode="P")
             lbl_pil.putpalette(np.asarray(list(color_mapping.values())).astype(np.uint8).flatten())
 
             if 'http' in url and '/'.join(Path(url).parts[4:-1]) is not None:

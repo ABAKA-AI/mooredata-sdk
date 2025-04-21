@@ -1,6 +1,7 @@
 lxml
 numpy
 opencv_python
+pillow
 Requests
 tqdm
 dynaconf
