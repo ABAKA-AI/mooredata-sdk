@@ -12,7 +12,7 @@ sk = "Secret Key"
 client = mooredata.Client(ak, sk)
 
 """
-After creating an export task, you can see the export task id of the corresponding task 
+After creating an export_data task, you can see the export_data task id of the corresponding task 
 in "Import/Export"->"Data Export".
 创建导出任务后可以在"导入导出"->"数据导出"中看到对应任务的导出编号
 """

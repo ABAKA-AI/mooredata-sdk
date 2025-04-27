@@ -185,7 +185,7 @@ sk = Secret Key
 client = mooredata.Client(ak, sk)
 
 """
-After creating an export task, you can see the export task id of the corresponding task
+After creating an export_data task, you can see the export_data task id of the corresponding task
 in "Import/Export"->"Data Export".
 """
 source_data = client.get_data(export_task_id)

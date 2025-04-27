@@ -38,6 +38,10 @@ class DataFactory():
         pass
 
     @abstractmethod
+    def import_nuscenes_product(self, nuscenes_root, output_dir, oss_root, predata=False):
+        pass
+    
+    @abstractmethod
     def visual_coco_product(self, source_data, data_path, out_path=None):
         pass
 
@@ -64,7 +68,7 @@ class DataFactory():
     @abstractmethod
     def postprocess_coco_prodect(self, data_path, out_path=None):
         pass
-
+    
 
 class ExportFactory(DataFactory):
     def __init__(self):
@@ -72,43 +76,48 @@ class ExportFactory(DataFactory):
 
     def export_coco_product(self, source_data, out_path=None, mapping=None):
         print(self.type, "process has been created.")
-        from ..io.export.coco.export_coco import ExportCoco
+        from ..io.export_data.coco.export_coco import ExportCoco
         return ExportCoco(source_data, out_path, mapping)
 
     def export_kitti_product(self, source_data, out_path=None, mapping=None):
         print(self.type, "process has been created.")
-        from ..io.export.kitti.export_kitti import ExportKitti
+        from ..io.export_data.kitti.export_kitti import ExportKitti
         return ExportKitti(source_data, out_path, mapping)
 
     def export_labelme_product(self, source_data, out_path=None, mapping=None):
         print(self.type, "process has been created.")
-        from ..io.export.labelme.export_labelme import ExportLabelme
+        from ..io.export_data.labelme.export_labelme import ExportLabelme
         return ExportLabelme(source_data, out_path, mapping)
 
     def export_voc_product(self, source_data, out_path=None, mapping=None):
         print(self.type, "process has been created.")
-        from ..io.export.voc.export_voc import ExportVoc
+        from ..io.export_data.voc.export_voc import ExportVoc
         return ExportVoc(source_data, out_path, mapping)
 
     def export_yolo_product(self, source_data, out_path=None, mapping=None):
         print(self.type, "process has been created.")
-        from ..io.export.yolo.export_yolo import ExportYolo
+        from ..io.export_data.yolo.export_yolo import ExportYolo
         return ExportYolo(source_data, out_path, mapping)
 
     def export_mask_product(self, source_data, out_path=None, mapping=None):
         print(self.type, "process has been created.")
-        from ..io.export.mask.generate_mask import ExportMask
+        from ..io.export_data.mask.generate_mask import ExportMask
         return ExportMask(source_data, out_path, mapping)
 
     def export_nuscenes_product(self, source_data, out_path=None, sensor_mapping=None):
         print(self.type, "process has been created.")
-        from ..io.export.nuscenes.export_nuscenes import ExportNuscenes
+        from ..io.export_data.nuscenes.export_nuscenes import ExportNuscenes
         return ExportNuscenes(source_data, out_path, sensor_mapping)
 
 
 class ImportFactory(DataFactory):
     def __init__(self):
         self.type = "IMPORT"
+
+    def import_nuscenes_product(self, nuscenes_root, output_dir, oss_root, predata=False, json_file_name=None, is_key_frame=False):
+        print(self.type, "process has been created.")
+        from ..io.import_data.nuscenes.import_nuscenes import ImportNuscenes
+        return ImportNuscenes(nuscenes_root, output_dir, oss_root, predata, json_file_name, is_key_frame)
 
 
 class VisualFactory(DataFactory):

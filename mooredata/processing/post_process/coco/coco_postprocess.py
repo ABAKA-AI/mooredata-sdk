@@ -9,7 +9,7 @@ from tqdm import tqdm
 from ..process import PostProcess
 from mooredata.utils import load_json
 from mooredata.core.moore_data import MOORE
-from mooredata.io.export.coco.coco import COCO
+from mooredata.io.export_data.coco.coco import COCO
 from datetime import datetime
 
 

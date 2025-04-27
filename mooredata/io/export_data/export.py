@@ -84,16 +84,13 @@ class ExportData():
         for labeldata in self.source_data.data:
             label_data_infos_urls = labeldata.info.info.url
             label_data_infos_sizes = []
-            if hasattr(labeldata.info.info, 'size'):
-                label_data_infos_sizes = labeldata.info.info.size
-            else:
-                for url in labeldata.info.info.url:
-                    try:
-                        height, width = cv_tools.get_urlimage_size(url)
-                    except:
-                        height, width = None, None
-                    size = {"width": width, "height": height}
-                    label_data_infos_sizes.append(size)
+            for url in labeldata.info.info.url:
+                try:
+                    height, width = cv_tools.get_urlimage_size(url)
+                except:
+                    height, width = None, None
+                size = {"width": width, "height": height}
+                label_data_infos_sizes.append(size)
             label_data_labels = labeldata.labels
             for mdiu_id, mdiu_va in enumerate(label_data_infos_urls):
                 if version == 1:
@@ -142,7 +139,7 @@ class ExportData():
 
     def _query(self, key, value):
         """
-        Callback function for customising the addition or deletion of certain fields in the standard export format
+        Callback function for customising the addition or deletion of certain fields in the standard export_data format
         :param key: Property names in standard format
         :param value: Data available for manipulation and can be customised to add attributes
         :return:

@@ -159,7 +159,7 @@ def get_points(points):
 
 def get_coco_points(points):
     """
-    Used with get_points in the mask tool export to get the coco bbox for xmin, ymin, xmax, ymax
+    Used with get_points in the mask tool export_data to get the coco bbox for xmin, ymin, xmax, ymax
     :param points:
     :return:
     """
@@ -172,7 +172,7 @@ def get_coco_points(points):
 
 def get_voc_points(points):
     """
-    Used in conjunction with get_points in the mask tool export to generate multiple tag points
+    Used in conjunction with get_points in the mask tool export_data to generate multiple tag points
     :param points:
     :return:
     """

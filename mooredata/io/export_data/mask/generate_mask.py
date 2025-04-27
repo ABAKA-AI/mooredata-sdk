@@ -52,14 +52,11 @@ class ExportMask(ExportData):
         out_root = ''
         for i in tqdm(range(len(mask_data))):
             url = mask_data[i]['info']
-            print(url)
-            # try:
             height = mask_data[i]['size']['height']
             width = mask_data[i]['size']['width']
             if not height or not width:
+                print('no size, continue: ', url)
                 continue
-            # except:
-            #     height, width = cv_tools.get_urlimage_size(url)
             img = np.zeros((height * 2, width * 2, 3), np.uint8)
             labels = mask_data[i]['labels']
 

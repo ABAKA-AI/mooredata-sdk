@@ -58,10 +58,10 @@ class Export(object):
         cls.export_f.export_mask_product(source_data, out_path, mapping).p_mask()
 
     @classmethod
-    def moore_json2nuscenes_3dod(cls, source_data, out_path=None, sensor_mapping=None):
-        cls.export_f.export_nuscenes_product(source_data, out_path, sensor_mapping).moore_json2nuscenes_3dod()
+    def moore_json2nuscenes_lidarod(cls, source_data, out_path=None, sensor_mapping=None):
+        cls.export_f.export_nuscenes_product(source_data, out_path, sensor_mapping).moore_json2nuscenes_lidarod()
 
     @classmethod
     def moore_json2nuscenes_lidarseg(cls, source_data, out_path=None, sensor_mapping=None):
         cls.export_f.export_nuscenes_product(source_data, out_path, sensor_mapping).moore_json2nuscenes_lidarseg()
-        
+

@@ -77,7 +77,7 @@ class Client:
         :return: 数据对象
         """
         data = {"export_task_id": export_task_id}
-        return self._request("/export/find-info", data)
+        return self._request("/export_data/find-info", data)
         
     def get_task_info(self, task_id: str) -> Dict[str, Any]:
         """
