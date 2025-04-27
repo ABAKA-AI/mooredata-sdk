@@ -31,4 +31,4 @@ mapping = {"背景background": 'background', "草地lawn": 'lawn', "道路road":
 
 # coco
 out_path = "./output"
-Export.moore_json2nuscenes_3dod(source_data, out_path)
+Export.moore_json2nuscenes_lidarod(source_data, out_path)
