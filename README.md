@@ -48,29 +48,7 @@ Learn more about Abaka AI [here](https://www.abaka.ai/)!
 - [License](#license)
 
 ## Changelog
-
-[2024-05-09] perf:
-
-- Point Cloud Tools: We have optimized the code in pc tools and now support many new point cloud base operations that 
-are ahead of other python third-party point cloud libraries in terms of efficiency, See [What can we do](#what-can-we-do) for available features.
-
-[2023-11-29] perf
-
-- Optimize mask export 
-
-[2023-10-12] feat:
-
-- Support for interconversion of Euler angles, quaternions and rotation matrices 
-
-[2023-08-31] feat:
-
-- Support pinhole camera image de-distortion and fisheye camera image de-distortion
-- Support point cloud random subsampling and voxel subsampling
-- Support for removing points in the 3D box of the point cloud
-- Support Quaternion to Euler angle
-- Support PNP <br>
-
-[2023-07-21] mooredata-sdk v1.0.0 is released. <br>
+See [HISTORY.md](HISTORY.md) for more information.
 
 ## requirements
 
@@ -82,9 +60,7 @@ are ahead of other python third-party point cloud libraries in terms of efficien
     Requests
     tqdm
     dynaconf
-    scipy
-    dask[dataframe]
-    python-lzf
+    pandas
     Pillow
 ```
 
