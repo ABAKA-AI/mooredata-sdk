@@ -19,7 +19,7 @@ class ImportNuscenes(MooredataDet, MooredataLane):
 
     def nuscenes2mooredata_det(self):
         """
-        将NuScenes数据集转换为MooreData JSON格式
+        将NuScenes数据集转换为MooreData 3D JSON格式
         """
         if not self._det_initialized:
             MooredataDet.__init__(self, self.nuscenes_root, self.output_json_path, self.oss_root, self.predata, self.json_file_name, self.lidar_name)
@@ -29,7 +29,7 @@ class ImportNuscenes(MooredataDet, MooredataLane):
 
     def nuscenes2mooredata_lane(self):
         """
-        预留其他格式转换的接口
+        将NuScenes数据集转换为MooreData 4D JSON格式
         """
         if not self._lane_initialized:
             MooredataLane.__init__(self, self.nuscenes_root, self.output_json_path, self.oss_root, self.predata, self.json_file_name, self.lidar_name, self.bin_col, self.intensity_idx)

@@ -10,7 +10,7 @@ requirements = [r.strip() for r in requirements]
 
 setuptools.setup(
     name='MooreData_SDK',
-    version='1.5.0',
+    version='1.5.1',
     description='MooreData SDK',
     install_requires=requirements,
     long_description=open(

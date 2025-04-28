@@ -8,6 +8,87 @@ import numpy as np
 import pandas as pd
 from typing import Tuple, Dict
 
+# 实现一个简单的LZF解压缩函数
+def lzf_decompress(in_data, out_len):
+    """纯Python实现的LZF解压缩算法
+    
+    参数:
+        in_data: 压缩数据
+        out_len: 解压后的数据长度
+        
+    返回:
+        解压后的数据
+    """
+    if not in_data:
+        return bytearray(out_len)
+        
+    in_len = len(in_data)
+    out_data = bytearray(out_len)
+    in_ptr = 0
+    out_ptr = 0
+    
+    try:
+        while in_ptr < in_len and out_ptr < out_len:
+            ctrl = in_data[in_ptr]
+            in_ptr += 1
+            
+            if ctrl < 32:  # 未压缩的数据块
+                length = ctrl + 1
+                # 确保不会超出范围
+                if in_ptr + length > in_len or out_ptr + length > out_len:
+                    print(f"警告：LZF解压缩时超出范围，in_ptr={in_ptr}, length={length}, in_len={in_len}, out_ptr={out_ptr}, out_len={out_len}")
+                    length = min(length, in_len - in_ptr, out_len - out_ptr)
+                
+                # 复制未压缩的数据
+                out_data[out_ptr:out_ptr+length] = in_data[in_ptr:in_ptr+length]
+                out_ptr += length
+                in_ptr += length
+            else:  # 压缩的数据块
+                length = ctrl >> 5
+                if length == 7:  # 长度可能更长
+                    if in_ptr < in_len:
+                        length += in_data[in_ptr]
+                        in_ptr += 1
+                    else:
+                        break
+                
+                # 计算引用位置
+                reference = out_ptr - ((ctrl & 0x1f) << 8) - 1
+                if in_ptr < in_len:
+                    reference -= in_data[in_ptr]
+                    in_ptr += 1
+                else:
+                    break
+                
+                # 确保引用位置有效
+                if reference < 0:
+                    print(f"警告：LZF解压缩时引用位置无效，reference={reference}")
+                    break
+                
+                # 复制引用的数据
+                length += 2
+                # 确保不会超出范围
+                if out_ptr + length > out_len:
+                    print(f"警告：LZF解压缩时超出输出范围，out_ptr={out_ptr}, length={length}, out_len={out_len}")
+                    length = min(length, out_len - out_ptr)
+                
+                for i in range(length):
+                    if reference + i < out_ptr:
+                        out_data[out_ptr] = out_data[reference + i]
+                        out_ptr += 1
+                    else:
+                        # 如果引用位置超出当前位置，可能是数据损坏
+                        print(f"警告：LZF解压缩时引用位置超出当前位置，reference={reference}, i={i}, out_ptr={out_ptr}")
+                        break
+    except Exception as e:
+        print(f"LZF解压缩过程中发生错误：{e}")
+    
+    # 如果没有完全解压到预期大小，填充剩余部分为0
+    if out_ptr < out_len:
+        print(f"警告：LZF解压缩未达到预期大小，已解压{out_ptr}字节，预期{out_len}字节")
+    
+    return bytes(out_data)
+
 # 预编译正则表达式提升匹配效率
 HEADER_PATTERN = re.compile(
     r'^(VERSION|FIELDS|SIZE|TYPE|COUNT|WIDTH|HEIGHT|VIEWPOINT|POINTS|DATA)'
@@ -100,9 +181,21 @@ def read_compressed_data(pcd_path: str, data_start: int, dt: np.dtype,
         decompressed_size = np.frombuffer(f.read(4), dtype=np.uint32)[0]
         compressed_data = f.read(compressed_size)
 
-        # decompressed_data = lzf.decompress(compressed_data, decompressed_size)
-        decompressed_data = zlib.decompress(compressed_data)
+        try:
+            import lzf
+            decompressed_data = lzf.decompress(compressed_data, decompressed_size)
+        except ImportError:
+            try:
+                decompressed_data = lzf_decompress(compressed_data, decompressed_size)
+            except Exception as e:
+                try:
+                    decompressed_data = zlib.decompress(compressed_data)
+                except Exception as e2:
+                    return np.empty(0, dtype=dt)
         
+    if len(decompressed_data) != decompressed_size:
+        print(f"警告：解压后数据大小({len(decompressed_data)})与预期大小({decompressed_size})不符")
+    
     total_points = width * height
     pc_points_empty = np.empty(total_points, dtype=dt)
 
@@ -111,9 +204,17 @@ def read_compressed_data(pcd_path: str, data_start: int, dt: np.dtype,
     for name in dt.names:
         itemsize = dt.fields[name][0].itemsize
         bytes_total = itemsize * total_points
-        column = np.frombuffer(buffer[:bytes_total], dt.fields[name][0])
+        
+        if len(buffer) < bytes_total:
+            print(f"警告：buffer中数据不足，需要{bytes_total}字节，但只有{len(buffer)}字节")
+            missing_bytes = bytes_total - len(buffer)
+            temp_buffer = bytearray(buffer) + bytearray(missing_bytes)
+            column = np.frombuffer(temp_buffer, dt.fields[name][0])
+        else:
+            column = np.frombuffer(buffer[:bytes_total], dt.fields[name][0])
+            buffer = buffer[bytes_total:]
+        
         pc_points_empty[name] = column
-        buffer = buffer[bytes_total:]
 
     return pc_points_empty
 
@@ -187,8 +288,8 @@ def write_pcd(points, out_path, head=None, data_mode='binary'):
              f'SIZE {" ".join(head["SIZE"])}\n' \
              f'TYPE {" ".join(head["TYPE"])}\n' \
              f'COUNT {" ".join(head["COUNT"])}\n' \
-             f'WIDTH {point_num if "WIDTH" not in head else head["WIDTH"][0]}\n' \
-             f'HEIGHT {"1" if "HEIGHT" not in head else head["HEIGHT"][0]}\n' \
+             f'WIDTH {point_num if "WIDTH" not in head else head["WIDTH"]}\n' \
+             f'HEIGHT {"1" if "HEIGHT" not in head else head["HEIGHT"]}\n' \
              f'VIEWPOINT {"0 0 0 1 0 0 0" if "VIEWPOINT" not in head else " ".join(head["VIEWPOINT"])}\n' \
              f'POINTS {point_num}\n' \
              f'DATA {data_mode}'
