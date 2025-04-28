@@ -353,28 +353,28 @@ class nuscenes_detection():
         translation = [0, 0, 0]
         rotation = [1, 0, 0, 0]
 
-        try:
-            for sequence in self.moore_data.get('data', []):
-                info = sequence.get('info', {})
-
-                if frame_idx < len(info['info']['locations']) and frame_idx < len(info['info']['pcdUrl']):
-                    location = info['info']['locations'][frame_idx]
-
-                    if 'posMatrix' in location:
-                        pos_matrix = location['posMatrix']
-
-                        translation = [pos_matrix[0], pos_matrix[1], pos_matrix[2]]
-
-                        euler_angles = [
-                            pos_matrix[3],
-                            pos_matrix[4],
-                            pos_matrix[5]
-                        ]
-                        rotation = euler_to_quaternion(euler_angles)
-
-                        break
-        except Exception as e:
-            print(f"获取位置矩阵失败: {e}")
+        # try:
+        #     for sequence in self.moore_data.get('data', []):
+        #         info = sequence.get('info', {})
+        #
+        #         if frame_idx < len(info['info']['locations']) and frame_idx < len(info['info']['pcdUrl']):
+        #             location = info['info']['locations'][frame_idx]
+        #
+        #             if 'posMatrix' in location:
+        #                 pos_matrix = location['posMatrix']
+        #
+        #                 translation = [pos_matrix[0], pos_matrix[1], pos_matrix[2]]
+        #
+        #                 euler_angles = [
+        #                     pos_matrix[3],
+        #                     pos_matrix[4],
+        #                     pos_matrix[5]
+        #                 ]
+        #                 rotation = euler_to_quaternion(euler_angles)
+        #
+        #                 break
+        # except Exception as e:
+        #     print(f"获取位置矩阵失败: {e}")
 
         calibrated_sensor = {
             'token': calibrated_sensor_token,
@@ -448,14 +448,19 @@ class nuscenes_detection():
         channel = self.sensor_mapping.get(camera_idx, f'CAM_{camera_idx + 1}')
         filename = f"samples/{channel}/{os.path.basename(img_url)}"
 
-        img_height, img_width = 900, 1600
         target_path = os.path.join(self.output_dir, filename)
+        if os.path.exists(target_path):
+            return
         try:
-            from PIL import Image
-            with Image.open(target_path) as img:
-                img_width, img_height = img.size
+            if img_url.startswith(('http://', 'https://')):
+                download_file(img_url, target_path)
+                from PIL import Image
+                with Image.open(target_path) as img:
+                    img_width, img_height = img.size
+            else:
+                print(f"无法处理的文件路径: {img_url}")
         except Exception as e:
-            print(f"获取图片尺寸失败: {e}")
+            print(f"处理文件失败: {e}")
 
         sample_data_token = f"{ego_pose_token}_{camera_idx}"
         sample_data = {
@@ -491,16 +496,16 @@ class nuscenes_detection():
         if channel not in sample['data']:
             sample['data'][channel] = sample_data_token
 
-        target_path = os.path.join(self.output_dir, filename)
-        if os.path.exists(target_path):
-            return
-        try:
-            if img_url.startswith(('http://', 'https://')):
-                download_file(img_url, target_path)
-            else:
-                print(f"无法处理的文件路径: {img_url}")
-        except Exception as e:
-            print(f"处理文件失败: {e}")
+        # target_path = os.path.join(self.output_dir, filename)
+        # if os.path.exists(target_path):
+        #     return
+        # try:
+        #     if img_url.startswith(('http://', 'https://')):
+        #         download_file(img_url, target_path)
+        #     else:
+        #         print(f"无法处理的文件路径: {img_url}")
+        # except Exception as e:
+        #     print(f"处理文件失败: {e}")
 
     def _process_annotations(self, sample: Dict, sequence: Dict, frame_idx: int):
         """处理标注数据"""
@@ -548,7 +553,13 @@ class nuscenes_detection():
                         attr_parts.append(label_attributes[attr_key])
 
                 if not attr_parts and label_attributes:
-                    attr_parts = list(label_attributes.values())
+                    # 获取属性值并处理可能的列表
+                    attr_parts = []
+                    for value in label_attributes.values():
+                        if isinstance(value, list):
+                            attr_parts.append(','.join(map(str, value)))
+                        else:
+                            attr_parts.append(str(value))
 
                 full_attr_name = f"{label_name}." + ".".join(attr_parts)
                 attr_token = self.attribute_map.get(full_attr_name)
@@ -624,17 +635,19 @@ class nuscenes_detection():
 
             if 'locations' in info and frame_idx < len(info['locations']):
                 location = info['locations'][frame_idx]
-                if 'posMatrix' in location and len(location['posMatrix']) >= 6:
-                    pos_matrix = location['posMatrix']
-                    translation = [pos_matrix[0], pos_matrix[1], pos_matrix[2]]
+                pos_matrix = location['posMatrix']
+                translation = [pos_matrix[0], pos_matrix[1], pos_matrix[2]]
 
-                    euler_angles = [
-                        pos_matrix[3],
-                        pos_matrix[4],
-                        pos_matrix[5]
-                    ]
-                    rotation = euler_to_quaternion(euler_angles)
-
+                euler_angles = [
+                    pos_matrix[3],
+                    pos_matrix[4],
+                    pos_matrix[5]
+                ]
+                rotation = euler_to_quaternion(euler_angles)
+            else:
+                translation = [0, 0, 0]
+                rotation = [1, 0, 0, 0]
+                
             ego_pose_token = self._generate_token()
             ego_pose = {
                 'token': ego_pose_token,

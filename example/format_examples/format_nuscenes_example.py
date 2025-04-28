@@ -1,14 +1,5 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-"""
-# @Time         : 2025/3/25 18:04
-# @Author       : Wu Xinjun
-# @Site         : 
-# @File         : format_nuscenes_example.py
-# @Project      : mooresdk
-# @Software     : PyCharm
-# @Description  : 
-"""
 import mooredata
 from mooredata import Export
 
@@ -26,9 +17,7 @@ in "Import/Export"->"Data Export".
 创建导出任务后可以在"导入导出"->"数据导出"中看到对应任务的导出编号
 """
 source_data = client.get_data('export_task_id')
-mapping = {"背景background": 'background', "草地lawn": 'lawn', "道路road": 'road',
-           "地形terrain": 'terrain', "障碍物obstacle": 'obstacle'}
 
-# coco
+# nuscenes
 out_path = "./output"
 Export.moore_json2nuscenes_lidarod(source_data, out_path)

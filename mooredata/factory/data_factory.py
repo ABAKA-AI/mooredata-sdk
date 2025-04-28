@@ -114,10 +114,10 @@ class ImportFactory(DataFactory):
     def __init__(self):
         self.type = "IMPORT"
 
-    def import_nuscenes_product(self, nuscenes_root, output_dir, oss_root, predata=False, json_file_name=None, is_key_frame=False):
+    def import_nuscenes_product(self, nuscenes_root, output_json_path, oss_root, predata=False, json_file_name=None, lidar_name=None, bin_col=4, intensity_idx=3):
         print(self.type, "process has been created.")
         from ..io.import_data.nuscenes.import_nuscenes import ImportNuscenes
-        return ImportNuscenes(nuscenes_root, output_dir, oss_root, predata, json_file_name, is_key_frame)
+        return ImportNuscenes(nuscenes_root, output_json_path, oss_root, predata, json_file_name, lidar_name, bin_col, intensity_idx)
 
 
 class VisualFactory(DataFactory):
