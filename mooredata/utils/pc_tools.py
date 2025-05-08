@@ -19,7 +19,6 @@ TYPE_MAP = {
 }
 
 
-# 实现一个简单的LZF解压缩函数
 def lzf_decompress(in_data, out_len):
     """
 
