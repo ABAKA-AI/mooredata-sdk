@@ -8,16 +8,24 @@ import numpy as np
 import pandas as pd
 from typing import Tuple, Dict
 
+
+HEADER_PATTERN = re.compile(
+    r'^(VERSION|FIELDS|SIZE|TYPE|COUNT|WIDTH|HEIGHT|VIEWPOINT|POINTS|DATA)'
+)
+TYPE_MAP = {
+    ('U', 1): np.uint8, ('U', 2): np.uint16, ('U', 4): np.uint32, ('U', 8): np.uint64,
+    ('I', 1): np.int8, ('I', 2): np.int16, ('I', 4): np.int32, ('I', 8): np.int64,
+    ('F', 4): np.float32, ('F', 8): np.float64
+}
+
+
 # 实现一个简单的LZF解压缩函数
 def lzf_decompress(in_data, out_len):
-    """纯Python实现的LZF解压缩算法
-    
-    参数:
-        in_data: 压缩数据
-        out_len: 解压后的数据长度
-        
-    返回:
-        解压后的数据
+    """
+
+    :param in_data: Compressed data
+    :param out_len: Length of decompressed data
+    :return: Decompressed data
     """
     if not in_data:
         return bytearray(out_len)
@@ -32,27 +40,24 @@ def lzf_decompress(in_data, out_len):
             ctrl = in_data[in_ptr]
             in_ptr += 1
             
-            if ctrl < 32:  # 未压缩的数据块
+            if ctrl < 32:
                 length = ctrl + 1
-                # 确保不会超出范围
                 if in_ptr + length > in_len or out_ptr + length > out_len:
                     print(f"警告：LZF解压缩时超出范围，in_ptr={in_ptr}, length={length}, in_len={in_len}, out_ptr={out_ptr}, out_len={out_len}")
                     length = min(length, in_len - in_ptr, out_len - out_ptr)
                 
-                # 复制未压缩的数据
                 out_data[out_ptr:out_ptr+length] = in_data[in_ptr:in_ptr+length]
                 out_ptr += length
                 in_ptr += length
-            else:  # 压缩的数据块
+            else:
                 length = ctrl >> 5
-                if length == 7:  # 长度可能更长
+                if length == 7:
                     if in_ptr < in_len:
                         length += in_data[in_ptr]
                         in_ptr += 1
                     else:
                         break
                 
-                # 计算引用位置
                 reference = out_ptr - ((ctrl & 0x1f) << 8) - 1
                 if in_ptr < in_len:
                     reference -= in_data[in_ptr]
@@ -60,14 +65,11 @@ def lzf_decompress(in_data, out_len):
                 else:
                     break
                 
-                # 确保引用位置有效
                 if reference < 0:
                     print(f"警告：LZF解压缩时引用位置无效，reference={reference}")
                     break
                 
-                # 复制引用的数据
                 length += 2
-                # 确保不会超出范围
                 if out_ptr + length > out_len:
                     print(f"警告：LZF解压缩时超出输出范围，out_ptr={out_ptr}, length={length}, out_len={out_len}")
                     length = min(length, out_len - out_ptr)
@@ -77,31 +79,23 @@ def lzf_decompress(in_data, out_len):
                         out_data[out_ptr] = out_data[reference + i]
                         out_ptr += 1
                     else:
-                        # 如果引用位置超出当前位置，可能是数据损坏
                         print(f"警告：LZF解压缩时引用位置超出当前位置，reference={reference}, i={i}, out_ptr={out_ptr}")
                         break
     except Exception as e:
         print(f"LZF解压缩过程中发生错误：{e}")
     
-    # 如果没有完全解压到预期大小，填充剩余部分为0
     if out_ptr < out_len:
         print(f"警告：LZF解压缩未达到预期大小，已解压{out_ptr}字节，预期{out_len}字节")
     
     return bytes(out_data)
 
-# 预编译正则表达式提升匹配效率
-HEADER_PATTERN = re.compile(
-    r'^(VERSION|FIELDS|SIZE|TYPE|COUNT|WIDTH|HEIGHT|VIEWPOINT|POINTS|DATA)'
-)
-TYPE_MAP = {
-    ('U', 1): np.uint8, ('U', 2): np.uint16, ('U', 4): np.uint32, ('U', 8): np.uint64,
-    ('I', 1): np.int8, ('I', 2): np.int16, ('I', 4): np.int32, ('I', 8): np.int64,
-    ('F', 4): np.float32, ('F', 8): np.float64
-}
-
 
 def parse_header(pcd_path: str) -> Tuple[Dict, int]:
-    """解析PCD文件头信息"""
+    """
+    Parsing PCD file headers
+    :param pcd_path:
+    :return:
+    """
     headers = {}
     data_start = 0
     encoding = 'utf-8'
@@ -131,7 +125,14 @@ def parse_header(pcd_path: str) -> Tuple[Dict, int]:
 
 
 def build_dtype(fields: list, types: list, sizes: list, counts: list) -> np.dtype:
-    """构建结构化数组的dtype"""
+    """
+    Constructing dtype for structured arrays
+    :param fields:
+    :param types:
+    :param sizes:
+    :param counts:
+    :return:
+    """
     dtype = []
     for field, type_char, size, count in zip(fields, types, sizes, counts):
         np_type = TYPE_MAP.get((type_char.upper(), int(size)), None)
@@ -147,7 +148,13 @@ def build_dtype(fields: list, types: list, sizes: list, counts: list) -> np.dtyp
 
 
 def read_ascii_data(pcd_path: str, data_start: int, dtype: np.dtype) -> np.ndarray:
-    """读取ASCII格式的点云数据"""
+    """
+    Reading point cloud data in ASCII format
+    :param pcd_path:
+    :param data_start:
+    :param dtype:
+    :return:
+    """
     try:
         return np.loadtxt(pcd_path, skiprows=data_start, dtype=dtype)
     except ValueError:
@@ -221,19 +228,13 @@ def read_compressed_data(pcd_path: str, data_start: int, dt: np.dtype,
 
 def read_pcd(pcd_path: str) -> Tuple[np.ndarray, Dict]:
     """
-    高效读取PCD文件，返回点云数据和头信息
-
-    参数:
-        pcd_path: PCD文件路径
-
-    返回:
-        points: 点云数据(NxM的numpy数组)
-        headers: 头信息字典
+    Read PCD file, return point cloud data and header information
+    :param pcd_path:
+    :return: points data [n x m] ndarray
+             headers
     """
-    # 解析头信息
     headers, data_start, encoding = parse_header(pcd_path)
 
-    # 构建结构化数据类型
     dtype = build_dtype(
         headers['FIELDS'],
         headers['TYPE'],
@@ -241,7 +242,6 @@ def read_pcd(pcd_path: str) -> Tuple[np.ndarray, Dict]:
         headers['COUNT']
     )
 
-    # 根据数据格式进行读取
     data_format = headers['DATA']
     if data_format == 'ascii':
         points = read_ascii_data(pcd_path, data_start, dtype)
@@ -257,7 +257,6 @@ def read_pcd(pcd_path: str) -> Tuple[np.ndarray, Dict]:
     else:
         raise ValueError(f"Unsupported data format: {data_format}")
 
-    # 转换为二维数组视图
     return np.array(points.view(dtype).tolist()), headers
 
 
